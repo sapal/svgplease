@@ -1,0 +1,117 @@
+svgplease COMMAND [then COMMAND]*
+
+COMMAND:
+  open FILENAME+  // Opens files (adds them to open file list), selects top nodes (<svg>).
+  save [to] FILENAME+  // Saves open files. If there are more files than filenames, additional filenames are generated.
+  select SELECTOR  // Replaces each selection with sub-node matching SELECTOR.
+  rotate ROTATION_SPECIFICATION  // Rotates selected nodes.
+  scale SCALE_SPECIFICATION  // Scales selected nodes.
+  move MOVE_SPECIFICATION  // Translates selected nodes.
+  remove [selected]  // Removes selected nodes.
+  cut out [selected]  // Removes everything but selected nodes.
+  change (fill|stroke) [color] [to] COLOR  // Change fill/stroke color of selected nodes.
+  change fill [style] [to] FILL_STYLE_CHANGE [COLOR] // Change fill style of selected nodes.
+  change stroke [style] [to] STROKE_STYLE_CHANGE [COLOR] // Change stroke style of selected nodes.
+  change (fill|stroke) [opacity] [to] OPACITY_CHANGE  // Change fill/stroke opacity of selected nodes.
+  change text to ANY_TEXT  // Change text to given.
+  change font size [to] (LENGTH|PERCENT)  // Change font size.
+  change font style to ANY_TEXT  // Change font name.
+  generate [DIMENSIONS] [COLOR] (circle|rectangle|star|text reading ANY_TEXT) [with id ANY_TEXT] [[on] LENGTH [[and] LENGTH]]  // Generates new object with given parameters and given location
+  change [like] from FILENAME [via FILENAME]* to FILENAME  // Changes the nodes accordingly to the change between the first file and the second one.
+  tile [(to fill|on)] [NUMBER [of]] PAGE_DIMENSIONS [page[s]]  // Tiles the images on a page. If "to fill" is specified, the images will be repeated to fill the page.
+  replace with FILENAME  // Replaces selected objects with image loaded from FILENAME.
+  render to FILENAME [[with] NUMBERdpi]  // Renders selected objects to file (filetype determined by extension).
+
+FILENAME:
+  file ANY_TEXT
+  NOT_KEYWORD
+
+SELECTOR:
+  #object_id
+
+ANY_TEXT:
+  .*
+
+NOT_KEYWORD = ANY_TEXT - {then, file}
+
+NUMBER = // any float
+
+ROTATION_SPECIFICATION:
+  [by] NUMBER [(degrees|radians|deg|rad)] [around POINT] [ROTATION_DIRECTION]  // Rotation center defaults to center, direction defaults to clockwise.
+  ROTATION_DIRECTION    // 90 degrees
+
+ROTATION_DIRECTION:
+  [(clockwise|counterclockwise|cw|ccw)]
+
+POINT:
+  center
+  (horizontal center|left|right) (vertical center|top|bottom)
+  POSITION POSITION
+
+POSITION: 
+  NUMBER [[of] LENGTH_UNIT]
+
+SCALE_SPECIFICATION:
+  [by] (NUMBER|PERCENT) [and by] [(NUMBER|PERCENT)]  // horizontally, vertically
+  [by] (NUMBER|PERCENT) DIRECTION [and by] [(NUMBER|PERCENT) [DIRECTION]]
+  [by] (NUMBER|PERCENT) both [directions]
+  to LENGTH wide [[and] LENGTH tall]
+  to LENGTH tall [[and] LENGTH wide]
+  
+DIRECTION:
+  (vertically|horizontally|ver|hor|x|y)
+
+MOVE_SPECIFICATION:
+  [by] LENGTH [and by] [LENGTH]  // horizontally, vertically
+  [by] LENGTH DIRECTION [and by] [LENGTH [DIRECTION]]
+  to POSITION DIRECTION [and to] [POSITION [DIRECTION]]
+  to POINT
+
+LENGTH:
+  NON_NEGATIVE_NUMBER [[of] LENGTH_UNIT]
+
+LENGTH_UNIT:
+  (meter[s]|centimeter[s]|millimeter[s]|pixel[s]|point[s]|m|cm|mm|p|px|pt)
+
+NON_NEGATIVE_NUMBER = // any float >= 0
+
+COLOR:
+  from COLOR to COLOR
+  [to] COLOR
+
+COLOR:
+  #rgb
+  #rgba
+  rgb(r, g, b)
+  // color name.
+
+OPACITY_CHANGE:
+  (transparent|opaque)
+  NUMBER_0_1
+  PERCENT
+  by [-]NUMBER_0_1
+  by [-]PERCENT
+
+NUMBER_0_1 = // any float from [0 .. 1]
+
+NUMBER_0_100 = // any float from [0 .. 100]
+
+PERCENT:
+  NUMBER_0_100% 
+
+FILL_STYLE_CHANGE:
+  (none|solid)
+
+STROKE_STYLE_CHANGE:
+  none
+  [(LENGTH|PERCENT) [wide]] (solid|dashed|dotted) 
+
+DIMENSIONS:
+  LENGTH  // Both dimensions the same
+  LENGTH [by] LENGTH  // wide, tall
+  LENGTH wide [and] LENGTH tall
+  LENGTH tall [and] LENGTH wide
+
+PAGE_DIMENSIONS:
+  LENGTH [[by] LENGTH]
+  (a3|a4|a5|a6)
