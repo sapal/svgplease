@@ -1,0 +1,2 @@
+open input0.svg then select #blue then rotate 45deg clockwise then save to output0.svg
+open input1.svg then rotate 45deg clockwise then save to output1.svg

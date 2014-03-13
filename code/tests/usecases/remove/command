@@ -1,0 +1,1 @@
+open input0.svg then select #red then remove selected then save to output0.svg

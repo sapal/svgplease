@@ -1,0 +1,1 @@
+open input0.svg then select #green then scale by 200% then save to output0.svg
