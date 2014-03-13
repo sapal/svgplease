@@ -1,4 +1,5 @@
 from modgrammar import *
+from . import command
 
 grammar_whitespace_mode = "optional"
 
@@ -16,4 +17,10 @@ class Filename(Grammar):
     def grammar_elem_init(self, sessiondata):
         elements = self[0].elements
         self.filename = elements[0].string if len(elements) == 2 else elements[2].string
+
+class Open(Grammar):
+    grammar = ("open", SEPARATOR, ONE_OR_MORE(Filename))
+    def grammar_elem_init(self, sessiondata):
+        filenames = map(lambda g : g.filename, self[2])
+        self.command = command.Open(*filenames)
 

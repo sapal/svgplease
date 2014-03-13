@@ -2,6 +2,7 @@ import unittest
 
 import svgplease
 import svgplease.parse
+from svgplease import command
 
 class TestParse(unittest.TestCase):
     """Base class for Parse* tests."""
@@ -32,4 +33,13 @@ class ParseFilename(TestParse):
     def test_parse_prefixed_filename(self):
         self.assertEqual(self.parse("file", "file.svg").filename, "file.svg")
 
+class ParseOpen(TestParse):
+    tested_class_name = "Open"
+
+    def test_open_single_file(self):
+        self.assertEqual(self.parse("open", "file.svg").command, command.Open("file.svg"))
+
+    def test_open_multiple_files(self):
+        self.assertEqual(self.parse("open", "file.svg", "other file.svg", "file", "then").command,
+                command.Open("file.svg", "other file.svg", "then"))
 
