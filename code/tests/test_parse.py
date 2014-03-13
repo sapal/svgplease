@@ -29,6 +29,7 @@ class ParseFilename(TestParse):
     def test_parse_special_filename(self):
         self.assertParsingFailed("then")
         self.assertParsingFailed("file")
+        self.assertParsingFailed("to")
 
     def test_parse_prefixed_filename(self):
         self.assertEqual(self.parse("file", "file.svg").filename, "file.svg")
@@ -42,4 +43,14 @@ class ParseOpen(TestParse):
     def test_open_multiple_files(self):
         self.assertEqual(self.parse("open", "file.svg", "other file.svg", "file", "then").command,
                 command.Open("file.svg", "other file.svg", "then"))
+
+class ParseSave(TestParse):
+    tested_class_name = "Save"
+
+    def test_save_single_file(self):
+        self.assertEqual(self.parse("save", "file.svg").command, command.Save("file.svg"))
+
+    def test_save_to_files(self):
+        self.assertEqual(self.parse("save", "to", "file1.svg", "file2.svg").command,
+                command.Save("file1.svg", "file2.svg"))
 

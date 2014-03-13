@@ -11,7 +11,7 @@ def join_tokens(tokens):
 
 class Filename(Grammar):
     grammar = OR(
-            (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file")), SEPARATOR),
+            (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR),
             ("file", SEPARATOR, ANY_EXCEPT(SEPARATOR), SEPARATOR))
     grammar_whitespace_mode = "explicit"
     def grammar_elem_init(self, sessiondata):
@@ -23,4 +23,10 @@ class Open(Grammar):
     def grammar_elem_init(self, sessiondata):
         filenames = map(lambda g : g.filename, self[2])
         self.command = command.Open(*filenames)
+
+class Save(Grammar):
+    grammar = ("save", SEPARATOR, OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
+    def grammar_elem_init(self, sessiondata):
+        filenames = map(lambda g : g.filename, self[3])
+        self.command = command.Save(*filenames)
 

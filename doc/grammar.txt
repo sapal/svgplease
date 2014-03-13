@@ -32,7 +32,7 @@ SELECTOR:
 ANY_TEXT:
   .*
 
-NOT_KEYWORD = ANY_TEXT - {then, file}
+NOT_KEYWORD = ANY_TEXT - {then, file, to}
 
 NUMBER = // any float
 
