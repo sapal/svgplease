@@ -81,10 +81,6 @@ LENGTH_UNIT:
 NON_NEGATIVE_NUMBER = // any float >= 0
 
 COLOR:
-  from COLOR to COLOR
-  [to] COLOR
-
-COLOR:
   #rgb
   #rgba
   rgb(r, g, b)
