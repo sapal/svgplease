@@ -1,5 +1,7 @@
 from contextlib import contextmanager
+from xml.etree import ElementTree
 import glob
+import io
 import os
 import shutil
 import svgplease.main
@@ -56,5 +58,6 @@ class UsecaseTest(unittest.TestCase, metaclass=UsecaseTestLoader):
     """
     directory = None
     def assertSameSVG(self, output_file, expected_output_file):
-        #TODO: actually check file content
         self.assertTrue(os.path.isfile(output_file))
+        self.assertEqual(*map(lambda f : open(f).read().rstrip(), (output_file, expected_output_file)))
+

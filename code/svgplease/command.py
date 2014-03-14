@@ -3,6 +3,8 @@ import itertools
 import os
 import re
 
+ElementTree.register_namespace("", "http://www.w3.org/2000/svg")
+
 class CommandBase(object):
     """Base class for all commands."""
 
