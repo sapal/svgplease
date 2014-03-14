@@ -30,3 +30,7 @@ class Save(Grammar):
         filenames = map(lambda g : g.filename, self[3])
         self.command = command.Save(*filenames)
 
+class CommandList(Grammar):
+    grammar = LIST_OF(OR(Open, Save), sep=("then", SEPARATOR))
+    def grammar_elem_init(self, sessiondata):
+        self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))

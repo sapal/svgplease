@@ -17,4 +17,3 @@ class Save(object):
         return self.filenames == other.filenames
 
     #TODO: __hash__ ?
-

@@ -54,3 +54,16 @@ class ParseSave(TestParse):
         self.assertEqual(self.parse("save", "to", "file1.svg", "file2.svg").command,
                 command.Save("file1.svg", "file2.svg"))
 
+class ParseCommandList(TestParse):
+    tested_class_name = "CommandList"
+
+    def test_open_command(self):
+        self.assertEqual(self.parse("open", "file.svg").command_list, [command.Open("file.svg")])
+
+    def test_save_command(self):
+        self.assertEqual(self.parse("save", "to", "file2.svg").command_list, [command.Save("file2.svg")])
+
+    def test_two_commands(self):
+        self.assertEqual(
+                self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
+                [command.Open("file.svg"), command.Save("file1.svg")])
