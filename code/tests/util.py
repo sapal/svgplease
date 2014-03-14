@@ -59,5 +59,10 @@ class UsecaseTest(unittest.TestCase, metaclass=UsecaseTestLoader):
     directory = None
     def assertSameSVG(self, output_file, expected_output_file):
         self.assertTrue(os.path.isfile(output_file))
-        self.assertEqual(*map(lambda f : open(f).read().rstrip(), (output_file, expected_output_file)))
+        content_list = []
+        for name in (output_file, expected_output_file):
+            with open(name) as f:
+                content_list.append(f.read().rstrip())
+        content, expected_content = content_list
+        self.assertEqual(content, expected_content)
 
