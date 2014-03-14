@@ -1,0 +1,5 @@
+open input0.svg then change color to #ff0000 then save to output0.svg
+open input1.svg then change fill color to #ff0000 then save to output1.svg
+open input2.svg then change stroke color to #00ff00 then save to output2.svg
+open input3.svg then change fill and stroke color to #00ff00 then save to output3.svg
+open input4.svg then change stroke and fill color to #00ff00 then save to output4.svg
