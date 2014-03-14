@@ -1,6 +1,6 @@
 import os
 import unittest
-from xml.etree.ElementTree import ElementTree
+from xml.etree import ElementTree
 from . import util
 
 from svgplease.command import ExecutionContext, Open, Save, SVGRoot
@@ -31,7 +31,7 @@ class TestOpen(unittest.TestCase):
             Open(filename).execute(execution_context)
             self.assertEqual(len(execution_context.svg_roots), 2)
             root = execution_context.svg_roots[1]
-            self.assertIsInstance(root.root_element, ElementTree)
+            self.assertIsInstance(root.root_element, ElementTree.ElementTree)
             self.assertEqual(root.filename, filename)
 
 class TestSave(unittest.TestCase):
@@ -51,6 +51,20 @@ class TestSave(unittest.TestCase):
         self.assertNotEqual(
                 hash(Save("file1.svg", "file2.svg")),
                 hash(Save("file2.svg", "file1.svg")))
+
+    def test_execute(self):
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "circle.svg")) as testdir:
+            filename = os.path.join(testdir, "circle.svg")
+            svg_root = ElementTree.parse(filename)
+            for i in range(4):
+                execution_context.svg_roots.append(SVGRoot(svg_root, "circle.svg"))
+            names = list(map(
+                lambda f : os.path.join(testdir, f),
+                ("output0.svg", "output1.svg", "output1.svg")))
+            Save(*names).execute(execution_context)
+            for name in ("output0.svg", "output1.svg", "output2.svg", "output3.svg"):
+                self.assertTrue(os.path.isfile(os.path.join(testdir, name)))
 
 class TestExecutionContext(unittest.TestCase):
 

@@ -1,4 +1,7 @@
 from xml.etree import ElementTree
+import itertools
+import os
+import re
 
 class CommandBase(object):
     """Base class for all commands."""
@@ -31,7 +34,35 @@ class Open(OpenSaveBase):
 
 class Save(OpenSaveBase):
     """Command for saving files"""
-    pass
+    def execute(self, execution_context):
+        used_filenames = set()
+        def filename_generator(filename):
+            yield filename
+            if filename[-4:] != ".svg":
+                filename += ".svg"
+                yield filename
+            if not re.search("[0-9]+", os.path.basename(filename)):
+                base = filename[:-4]
+                ending = filename[-4:]
+                index = 0
+            else:
+                match = list(re.finditer("[0-9]+", filename))[-1]
+                base = filename[:match.start()]
+                ending = filename[match.end():]
+                index = int(match.group())
+            while True:
+                index += 1
+                yield base + str(index) + ending
+        def generate_unique_filename(filename):
+            for name in filename_generator(filename):
+                if name not in used_filenames:
+                    return name
+        for svg_root, filename in zip(
+                execution_context.svg_roots,
+                itertools.chain(self.filenames, itertools.cycle(self.filenames[-1:]))):
+            filename = generate_unique_filename(filename)
+            used_filenames.add(filename)
+            svg_root.root_element.write(filename, encoding="utf-8", xml_declaration=True)
 
 class ExecutionContext(object):
     """Class for storing execution context for the commands.
