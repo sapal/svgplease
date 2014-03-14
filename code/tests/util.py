@@ -1,9 +1,20 @@
+from contextlib import contextmanager
 import glob
 import os
 import shutil
 import svgplease.main
 import unittest
 import tempfile
+
+TEST_DATA = os.path.join(os.path.dirname(__file__), "testdata")
+
+@contextmanager
+def TestDirectory(*files):
+    """Generates temporary directory and copies given files to it."""
+    with tempfile.TemporaryDirectory(prefix="svgplease-test") as tempdirname:
+        for f in files:
+            shutil.copy(f, tempdirname)
+        yield tempdirname
 
 class UsecaseTestLoader(type):
     def __new__(cls, name, bases, dct):
@@ -12,13 +23,11 @@ class UsecaseTestLoader(type):
             command_file = os.path.join(directory, "command")
             def generate_test(command, idx):
                 def test(self):
-                    with tempfile.TemporaryDirectory(prefix="svgplease-test") as tempdirname:
-                        for input_file in glob.glob(os.path.join(directory, "input{0}.*".format(idx))):
-                            shutil.copy(input_file, tempdirname)
+                    input_files = glob.glob(os.path.join(directory, "input{0}.*".format(idx)))
+                    expected_output_files = glob.glob(os.path.join(directory, "output{0}.*".format(idx)))
+                    with TestDirectory(*input_files) as tempdirname:
                         svgplease.main.run("test", command.split())
-
-                        for expected_output_file in glob.glob(
-                                os.path.join(directory, "output{0}.*".format(idx))):
+                        for expected_output_file in expected_output_files:
                             output_file = os.path.join(
                                     tempdirname,
                                     os.path.basename(expected_output_file))
