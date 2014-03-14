@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-all_testmodules = ["test_usecases", "test_parse"]
+all_testmodules = ["test_command", "test_parse", "test_usecases"]
 
 def suite():
   this_module = sys.modules[__name__]

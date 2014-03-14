@@ -1,19 +1,19 @@
-class Open(object):
+class OpenSaveBase(object):
+    """Base class for Open and Save commands."""
+    def __init__(self, *filenames):
+        self.filenames = filenames
+
+    def __eq__(self, other):
+        if not issubclass(other.__class__, self.__class__): return False
+        return self.filenames == other.filenames
+
+    def __hash__(self):
+        return hash(self.filenames)
+
+class Open(OpenSaveBase):
     """Command for opening files"""
-    def __init__(self, *filenames):
-        self.filenames = filenames
+    pass
 
-    def __eq__(self, other):
-        return self.filenames == other.filenames
-
-    #TODO: __hash__ ?
-
-class Save(object):
+class Save(OpenSaveBase):
     """Command for saving files"""
-    def __init__(self, *filenames):
-        self.filenames = filenames
-
-    def __eq__(self, other):
-        return self.filenames == other.filenames
-
-    #TODO: __hash__ ?
+    pass
