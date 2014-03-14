@@ -67,3 +67,18 @@ class ParseCommandList(TestParse):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
                 [command.Open("file.svg"), command.Save("file1.svg")])
+
+class ParseNumber(TestParse):
+    tested_class_name = "Number"
+
+    def test_integer(self):
+        self.assertEqual(self.parse("12").number, 12.0)
+
+    def test_float(self):
+        self.assertEqual(self.parse("10.52").number, 10.52)
+
+    def test_positive(self):
+        self.assertEqual(self.parse("+3").number, 3.0)
+
+    def test_negative(self):
+        self.assertEqual(self.parse("-5.5").number, -5.5)
