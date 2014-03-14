@@ -10,11 +10,17 @@ TEST_DATA = os.path.join(os.path.dirname(__file__), "testdata")
 
 @contextmanager
 def TestDirectory(*files):
-    """Generates temporary directory and copies given files to it."""
+    """Generates temporary directory, copies given files to it and switches into this directory.
+
+    After the testing is done the directory is deleted and original working directory is restored.
+    """
+    current_directory = os.getcwd()
     with tempfile.TemporaryDirectory(prefix="svgplease-test") as tempdirname:
+        os.chdir(tempdirname)
         for f in files:
             shutil.copy(f, tempdirname)
         yield tempdirname
+    os.chdir(current_directory)
 
 class UsecaseTestLoader(type):
     def __new__(cls, name, bases, dct):
