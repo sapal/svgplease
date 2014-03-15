@@ -75,3 +75,13 @@ class FillStroke(Grammar):
         fill = True if "fill" in self.string else None
         stroke = True if "stroke" in self.string else None
         self.fill_stroke = command.FillStroke(fill=fill, stroke=stroke)
+
+class ChangeColor(Grammar):
+    grammar = ("change", SEPARATOR, FillStroke, OPTIONAL(("color", SEPARATOR)),
+               OPTIONAL(OPTIONAL(("from", SEPARATOR)), Color),
+               OPTIONAL(("to", SEPARATOR)), Color)
+    def grammar_elem_init(self, sessiondata):
+        from_color = None if self[4] is None else self[4][1].color
+        self.command = command.ChangeColor(fill_stroke=self[2].fill_stroke,
+                                           from_color=from_color,
+                                           to_color=self[6].color)

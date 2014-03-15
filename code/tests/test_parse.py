@@ -111,3 +111,22 @@ class ParseFillStroke(TestParse):
     def test_fill_or_stroke(self):
         self.assertEqual(self.parse("fill").fill_stroke, command.FillStroke(fill=True))
         self.assertEqual(self.parse("stroke").fill_stroke, command.FillStroke(stroke=True))
+
+class ParseChangeColor(TestParse):
+    tested_class_name = "ChangeColor"
+
+    def test_fill_color(self):
+        self.assertEqual(self.parse("change", "fill", "color", "to", "#ff0000").command,
+                         command.ChangeColor(fill_stroke=command.FillStroke(fill=True),
+                                             to_color=command.Color(255, 0, 0)))
+
+    def test_fill_stroke_color(self):
+        self.assertEqual(self.parse("change", "color", "#00ff00ff").command,
+                         command.ChangeColor(fill_stroke=command.FillStroke(),
+                                             to_color=command.Color(0, 255, 0, 255)))
+
+    def test_from_color(self):
+        self.assertEqual(self.parse("change", "stroke", "color", "from", "rgb(10, 10, 10)", "to", "#ffffff").command,
+                         command.ChangeColor(fill_stroke=command.FillStroke(stroke=True),
+                                             from_color=command.Color(10, 10, 10),
+                                             to_color=command.Color(255, 255, 255)))
