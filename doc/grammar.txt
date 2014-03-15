@@ -9,8 +9,7 @@ COMMAND:
   move MOVE_SPECIFICATION  // Translates selected nodes.
   remove [selected]  // Removes selected nodes.
   cut out [selected]  // Removes everything but selected nodes.
-  replace FILL_STROKE color COLOR [by|with] COLOR  // Change fill/stroke/both color in selected nodes from one color to another (other colors remain unchanged).
-  change FILL_STROKE [color] [to] COLOR  // Change fill/stroke/both color of selected nodes.
+  change FILL_STROKE [color] [from COLOR] [to] COLOR  // Change fill/stroke/both color of selected nodes. If 'from COLOR' is specified only this color will be changed.
   change fill [style] [to] FILL_STYLE_CHANGE [COLOR] // Change fill style of selected nodes.
   change stroke [style] [to] STROKE_STYLE_CHANGE [COLOR] // Change stroke style of selected nodes.
   change FILL_STROKE [opacity] [to] OPACITY_CHANGE  // Change fill/stroke/both opacity of selected nodes.
