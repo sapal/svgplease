@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import Color, ExecutionContext, FillStroke, Open, Save, SVGRoot
+from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Open, Save, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -123,3 +123,24 @@ class TestFillStroke(unittest.TestCase):
         self.assertEqual(FillStroke(), FillStroke())
         self.assertEqual(FillStroke(fill=True), FillStroke(fill=True))
         self.assertNotEqual(FillStroke(), FillStroke(stroke=True))
+
+class TestChangeColor(unittest.TestCase):
+
+    def test_attributes(self):
+        fill_stroke = object()
+        from_color = object()
+        to_color = object()
+        change_color = ChangeColor(fill_stroke=fill_stroke, from_color=from_color, to_color=to_color)
+        self.assertEqual(change_color.fill_stroke, fill_stroke)
+        self.assertEqual(change_color.from_color, from_color)
+        self.assertEqual(change_color.to_color, to_color)
+        self.assertEqual(ChangeColor(fill_stroke=fill_stroke, to_color=to_color).from_color, None)
+
+    def test_eq(self):
+        fill_stroke = object()
+        from_color = object()
+        to_color = object()
+        self.assertEqual(ChangeColor(fill_stroke=fill_stroke, to_color=to_color, from_color=from_color),
+                         ChangeColor(fill_stroke=fill_stroke, to_color=to_color, from_color=from_color))
+        self.assertNotEqual(ChangeColor(fill_stroke=fill_stroke, to_color=to_color, from_color=from_color),
+                            ChangeColor(fill_stroke=fill_stroke, to_color=object(), from_color=from_color))

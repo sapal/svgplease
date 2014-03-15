@@ -121,3 +121,12 @@ class FillStroke(object):
     def __eq__(self, other):
         return self.fill == other.fill and self.stroke == other.stroke
 
+class ChangeColor(CommandBase):
+    """Command for changing color."""
+    def __init__(self, fill_stroke, to_color, from_color=None):
+        self.fill_stroke = fill_stroke
+        self.from_color = from_color
+        self.to_color = to_color
+    def __eq__(self, other):
+        return (self.fill_stroke, self.from_color, self.to_color) == (other.fill_stroke, other.from_color, other.to_color)
+
