@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ExecutionContext, Open, Save, SVGRoot
+from svgplease.command import Color, ExecutionContext, Open, Save, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -81,3 +81,20 @@ class TestSVGRoot(unittest.TestCase):
     def test_root_element(self):
         root_element = object()
         self.assertEqual(SVGRoot(root_element).root_element, root_element)
+
+class TestColor(unittest.TestCase):
+
+    def test_rgb(self):
+        color = Color(13, 16, 255)
+        self.assertEqual(color.rgb, (13, 16, 255))
+
+    def test_alpha(self):
+        color = Color(0, 255, 10, 127)
+        self.assertEqual(color.rgba, (0, 255, 10, 127))
+        self.assertEqual(color.alpha, 127)
+        color = Color(10, 20, 30)
+        self.assertEqual(color.alpha, None)
+
+    def test_str(self):
+        color = Color(0, 255, 10)
+        self.assertEqual(str(color), "#00ff0a")

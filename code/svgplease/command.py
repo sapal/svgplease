@@ -81,3 +81,22 @@ class SVGRoot(object):
     def __init__(self, root_element, filename="image.svg"):
         self.root_element = root_element
         self.filename = filename
+
+class Color(object):
+    """Class representing colors."""
+    def __init__(self, red, green, blue, alpha=None):
+        self.red = red
+        self.green = green
+        self.blue = blue
+        self.alpha = alpha
+
+    @property
+    def rgb(self):
+        return (self.red, self.green, self.blue)
+
+    @property
+    def rgba(self):
+        return (self.red, self.green, self.blue, self.alpha)
+
+    def __str__(self):
+        return "#{0:02x}{1:02x}{2:02x}".format(*self.rgb)
