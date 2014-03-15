@@ -100,3 +100,18 @@ class Color(object):
 
     def __str__(self):
         return "#{0:02x}{1:02x}{2:02x}".format(*self.rgb)
+
+class FillStroke(object):
+    """Class for specifying if a change should be applied to fill, stroke or both."""
+    def __init__(self, fill=None, stroke=None):
+        if fill is None and stroke is None:
+            fill = True
+            stroke = True
+        else:
+            if fill is None:
+                fill = False
+            if stroke is None:
+                stroke = False
+        self.fill = fill
+        self.stroke = stroke
+

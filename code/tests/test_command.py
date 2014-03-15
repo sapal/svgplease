@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import Color, ExecutionContext, Open, Save, SVGRoot
+from svgplease.command import Color, ExecutionContext, FillStroke, Open, Save, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -98,3 +98,18 @@ class TestColor(unittest.TestCase):
     def test_str(self):
         color = Color(0, 255, 10)
         self.assertEqual(str(color), "#00ff0a")
+
+class TestFillStroke(unittest.TestCase):
+
+    def test_default(self):
+        fill_stroke = FillStroke()
+        self.assertEqual(fill_stroke.fill, True)
+        self.assertEqual(fill_stroke.stroke, True)
+
+    def test_constructor(self):
+        fill_stroke = FillStroke(fill=True)
+        self.assertEqual(fill_stroke.fill, True)
+        self.assertEqual(fill_stroke.stroke, False)
+        fill_stroke = FillStroke(stroke=True)
+        self.assertEqual(fill_stroke.fill, False)
+        self.assertEqual(fill_stroke.stroke, True)
