@@ -99,6 +99,11 @@ class TestColor(unittest.TestCase):
         color = Color(0, 255, 10)
         self.assertEqual(str(color), "#00ff0a")
 
+    def test_eq(self):
+        self.assertEqual(Color(0, 255, 10), Color(0, 255, 10))
+        self.assertEqual(Color(0, 0, 0, 50), Color(0, 0, 0, 50))
+        self.assertNotEqual(Color(0, 0, 0, 0), Color(0, 0, 0))
+
 class TestFillStroke(unittest.TestCase):
 
     def test_default(self):
@@ -113,3 +118,8 @@ class TestFillStroke(unittest.TestCase):
         fill_stroke = FillStroke(stroke=True)
         self.assertEqual(fill_stroke.fill, False)
         self.assertEqual(fill_stroke.stroke, True)
+
+    def test_eq(self):
+        self.assertEqual(FillStroke(), FillStroke())
+        self.assertEqual(FillStroke(fill=True), FillStroke(fill=True))
+        self.assertNotEqual(FillStroke(), FillStroke(stroke=True))

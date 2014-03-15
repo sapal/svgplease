@@ -7,7 +7,10 @@ SEPARATOR = "\0"
 
 def join_tokens(tokens):
     """Joins tokens to internal representation suitable for parsing."""
-    return SEPARATOR.join(tokens) + SEPARATOR
+    if len(tokens) > 0:
+        return SEPARATOR.join(tokens) + SEPARATOR
+    else:
+        return ""
 
 class Filename(Grammar):
     grammar = OR(
@@ -36,11 +39,12 @@ class CommandList(Grammar):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 
 class Number(Grammar):
-    grammar = (OPTIONAL(OR("+", "-")), WORD("0-9"), OPTIONAL((".", WORD("0-9"))))
+    grammar = (OPTIONAL(OR("+", "-")), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
-        self.number = float(self.string)
+        self.number = float(self.string[:-len(SEPARATOR)])
 
 class Color(Grammar):
+    #TODO: color names
     grammar = OR(
             ("#", WORD("0-9a-fA-F", min=6, max=6),
             OPTIONAL(WORD("0-9a-fA-F", min=2, max=2)), SEPARATOR),
@@ -62,3 +66,12 @@ class Color(Grammar):
             rgb = map(lambda d : int(d.strip()), value.split(","))
         self.color = command.Color(*rgb, alpha=alpha)
 
+class FillStroke(Grammar):
+    grammar = OR(EMPTY,
+            (OR(("fill", OPTIONAL((OPTIONAL((SEPARATOR, "and")), (SEPARATOR, "stroke")))),
+                ("stroke", OPTIONAL((OPTIONAL((SEPARATOR, "and")), (SEPARATOR, "fill"))))),
+             SEPARATOR))
+    def grammar_elem_init(self, sessiondata):
+        fill = True if "fill" in self.string else None
+        stroke = True if "stroke" in self.string else None
+        self.fill_stroke = command.FillStroke(fill=fill, stroke=stroke)

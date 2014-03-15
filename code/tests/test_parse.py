@@ -12,7 +12,7 @@ class TestParse(unittest.TestCase):
 
     def parse(self, *tokens):
         return getattr(svgplease.parse, self.tested_class_name).parser().parse_text(
-                self.tokens(tokens), eof=True)
+                self.tokens(tokens), eof=True, matchtype="complete")
 
     def assertParsingFailed(self, *tokens):
         self.assertRaises(svgplease.parse.ParseError, self.parse, *tokens)
@@ -96,3 +96,18 @@ class ParseColor(TestParse):
         self.assertEqual(self.parse("rgb(10, 219,255)").color.rgb, (10, 219, 255))
         self.assertEqual(self.parse("rgb( 00, 003, 1)").color.rgb, (0, 3, 1))
 
+class ParseFillStroke(TestParse):
+    tested_class_name = "FillStroke"
+
+    def test_default(self):
+        self.assertEqual(self.parse().fill_stroke, command.FillStroke())
+
+    def test_fill_stroke(self):
+        self.assertEqual(self.parse("fill", "stroke").fill_stroke, command.FillStroke())
+        self.assertEqual(self.parse("fill", "and", "stroke").fill_stroke, command.FillStroke())
+        self.assertEqual(self.parse("stroke", "fill").fill_stroke, command.FillStroke())
+        self.assertEqual(self.parse("stroke", "and", "fill").fill_stroke, command.FillStroke())
+
+    def test_fill_or_stroke(self):
+        self.assertEqual(self.parse("fill").fill_stroke, command.FillStroke(fill=True))
+        self.assertEqual(self.parse("stroke").fill_stroke, command.FillStroke(stroke=True))
