@@ -82,3 +82,17 @@ class ParseNumber(TestParse):
 
     def test_negative(self):
         self.assertEqual(self.parse("-5.5").number, -5.5)
+
+class ParseColor(TestParse):
+    tested_class_name = "Color"
+
+    def test_hash_rgb(self):
+        self.assertEqual(str(self.parse("#00ff0a").color), "#00ff0a")
+
+    def test_hash_rgba(self):
+        self.assertEqual(self.parse("#0f88ff80").color.alpha, 128)
+
+    def test_value_rgb(self):
+        self.assertEqual(self.parse("rgb(10, 219,255)").color.rgb, (10, 219, 255))
+        self.assertEqual(self.parse("rgb( 00, 003, 1)").color.rgb, (0, 3, 1))
+
