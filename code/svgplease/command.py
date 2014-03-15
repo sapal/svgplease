@@ -33,6 +33,7 @@ class Open(OpenSaveBase):
         for filename in self.filenames:
             t = ElementTree.parse(filename)
             execution_context.svg_roots.append(SVGRoot(t, filename))
+            execution_context.selected_nodes.append(t.getroot())
 
 class Save(OpenSaveBase):
     """Command for saving files"""
@@ -71,10 +72,12 @@ class ExecutionContext(object):
 
     It has the following fields:
         - svg_roots - stores root elements for all opened/generated svg files
+        - selected_nodes - stores subset of nodes of all opened/generated svg files
     """
 
     def __init__(self):
         self.svg_roots = []
+        self.selected_nodes = []
 
 class SVGRoot(object):
     """Class representing the root node of SVG file."""

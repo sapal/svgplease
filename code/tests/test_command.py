@@ -32,6 +32,8 @@ class TestOpen(unittest.TestCase):
             self.assertEqual(len(execution_context.svg_roots), 2)
             root = execution_context.svg_roots[1]
             self.assertIsInstance(root.root_element, ElementTree.ElementTree)
+            self.assertEqual(len(execution_context.selected_nodes), 1)
+            self.assertIsInstance(execution_context.selected_nodes[0], ElementTree.Element)
             self.assertEqual(root.filename, filename)
 
 class TestSave(unittest.TestCase):
@@ -70,6 +72,9 @@ class TestExecutionContext(unittest.TestCase):
 
     def test_svg_roots(self):
         self.assertEqual(ExecutionContext().svg_roots, [])
+
+    def test_selected_nodes(self):
+        self.assertEqual(ExecutionContext().selected_nodes, [])
 
 class TestSVGRoot(unittest.TestCase):
 
