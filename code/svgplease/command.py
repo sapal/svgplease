@@ -1,5 +1,6 @@
 from xml.etree import ElementTree
 import itertools
+import math
 import os
 import re
 
@@ -105,6 +106,7 @@ class Color(object):
         return "#{0:02x}{1:02x}{2:02x}".format(*self.rgb)
 
     def __eq__(self, other):
+        if not issubclass(other.__class__, self.__class__): return False
         return self.rgba == other.rgba
 
 class FillStroke(object):
@@ -126,10 +128,40 @@ class FillStroke(object):
 
 class ChangeColor(CommandBase):
     """Command for changing color."""
+
     def __init__(self, fill_stroke, to_color, from_color=None):
         self.fill_stroke = fill_stroke
         self.from_color = from_color
         self.to_color = to_color
+
     def __eq__(self, other):
         return (self.fill_stroke, self.from_color, self.to_color) == (other.fill_stroke, other.from_color, other.to_color)
+    def execute(self, execution_context):
+        from . import parse
+        def parse_color(color_string):
+            try:
+                return parse.Color.parser().parse_text(parse.join_tokens(color_string.split()),
+                                                       eof=True, matchtype="complete").color
+            except parse.ParseError:
+                return None
+
+        def change_color(node, attribute):
+            if attribute in node.keys() and (
+                    self.from_color is None
+                    or parse_color(node.get(attribute)) == self.from_color):
+                node.set(attribute, str(self.to_color))
+                opacity_attribute = attribute + "-opacity"
+                if self.to_color.alpha is not None and (self.from_color is None
+                        or self.from_color.alpha is None
+                        or (opacity_attribute in node.keys()
+                            and math.round(255 * float(node.get(opacity_attribute)))
+                            == self.from_color.alpha)):
+                    node.set(opacity_attribute, "{0:.6f}".format(self.to_color.alpha / 255))
+
+        for node in execution_context.selected_nodes:
+            for subnode in node.iter():
+                if self.fill_stroke.fill:
+                    change_color(subnode, "fill")
+                if self.fill_stroke.stroke:
+                    change_color(subnode, "stroke")
 

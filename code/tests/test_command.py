@@ -108,6 +108,7 @@ class TestColor(unittest.TestCase):
         self.assertEqual(Color(0, 255, 10), Color(0, 255, 10))
         self.assertEqual(Color(0, 0, 0, 50), Color(0, 0, 0, 50))
         self.assertNotEqual(Color(0, 0, 0, 0), Color(0, 0, 0))
+        self.assertNotEqual(Color(0, 0, 0, 0), None)
 
 class TestFillStroke(unittest.TestCase):
 
@@ -149,3 +150,16 @@ class TestChangeColor(unittest.TestCase):
                          ChangeColor(fill_stroke=fill_stroke, to_color=to_color, from_color=from_color))
         self.assertNotEqual(ChangeColor(fill_stroke=fill_stroke, to_color=to_color, from_color=from_color),
                             ChangeColor(fill_stroke=fill_stroke, to_color=object(), from_color=from_color))
+
+    def test_execute(self):
+        # More usecases are covered by set-color usecase test.
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "circle.svg")) as testdir:
+            t = ElementTree.parse(os.path.join(testdir, "circle.svg"))
+            execution_context.selected_nodes.append(t.getroot())
+            command = ChangeColor(
+                    fill_stroke=FillStroke(),
+                    from_color=Color(0, 0, 0),
+                    to_color=Color(255, 0, 0))
+            command.execute(execution_context)
+            self.assertEqual(t.getroot()[0].attrib["stroke"], "#ff0000")

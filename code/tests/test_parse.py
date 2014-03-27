@@ -63,6 +63,9 @@ class ParseCommandList(TestParse):
     def test_save_command(self):
         self.assertEqual(self.parse("save", "to", "file2.svg").command_list, [command.Save("file2.svg")])
 
+    def test_change_color_command(self):
+        self.assertEqual(self.parse("change", "color", "to", "#ffffff").command_list,
+                [command.ChangeColor(fill_stroke=command.FillStroke(), to_color=command.Color(255, 255, 255))])
     def test_two_commands(self):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
