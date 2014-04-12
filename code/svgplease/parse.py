@@ -90,3 +90,28 @@ class NonNegativeNumber(Grammar):
     grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
         self.number = float(self.string[:-len(SEPARATOR)])
+
+class LengthUnit(Grammar):
+    grammar = (OR(
+        OR("px", "pixel", "pixels"),
+        OR("pt", "point", "points"),
+        OR("mm", "millimeter", "millimeters"),
+        OR("cm", "centimeter", "centimeters")
+        ), SEPARATOR)
+    unit_map = {
+            "px": "px",
+            "pixel": "px",
+            "pixels": "px",
+            "pt": "pt",
+            "point": "pt",
+            "points": "pt",
+            "mm": "mm",
+            "millimeter": "mm",
+            "millimeters": "mm",
+            "cm": "cm",
+            "centimeter": "cm",
+            "centimeters": "cm",
+        }
+    def grammar_elem_init(self, sessiondata):
+        self.unit = LengthUnit.unit_map[self[0].string]
+

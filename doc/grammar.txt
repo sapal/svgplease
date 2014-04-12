@@ -75,7 +75,7 @@ LENGTH:
   NON_NEGATIVE_NUMBER [[of] LENGTH_UNIT]
 
 LENGTH_UNIT:
-  (meter[s]|centimeter[s]|millimeter[s]|pixel[s]|point[s]|m|cm|mm|p|px|pt)
+  (centimeter[s]|millimeter[s]|pixel[s]|point[s]|cm|mm|p|px|pt)
 
 NON_NEGATIVE_NUMBER = // any float >= 0
 

@@ -146,3 +146,25 @@ class ParseNonNegativeNumber(TestParse):
     def test_zero(self):
         self.assertEqual(self.parse("0.0").number, 0.0)
 
+class ParseLengthUnit(TestParse):
+    tested_class_name = "LengthUnit"
+
+    def test_pixels(self):
+        self.assertEqual(self.parse("px").unit, "px")
+        self.assertEqual(self.parse("pixel").unit, "px")
+        self.assertEqual(self.parse("pixels").unit, "px")
+
+    def test_points(self):
+        self.assertEqual(self.parse("pt").unit, "pt")
+        self.assertEqual(self.parse("point").unit, "pt")
+        self.assertEqual(self.parse("points").unit, "pt")
+
+    def test_millimeters(self):
+        self.assertEqual(self.parse("mm").unit, "mm")
+        self.assertEqual(self.parse("millimeter").unit, "mm")
+        self.assertEqual(self.parse("millimeters").unit, "mm")
+
+    def test_centimeters(self):
+        self.assertEqual(self.parse("cm").unit, "cm")
+        self.assertEqual(self.parse("centimeter").unit, "cm")
+        self.assertEqual(self.parse("centimeters").unit, "cm")
