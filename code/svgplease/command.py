@@ -165,3 +165,11 @@ class ChangeColor(CommandBase):
                 if self.fill_stroke.stroke:
                     change_color(subnode, "stroke")
 
+class Length(object):
+    """Class representing length"""
+    def __init__(self, number, unit="px"):
+        self.number = number
+        self.unit = unit
+
+    def __eq__(self, other):
+        return (self.number, self.unit) == (other.number, other.unit)

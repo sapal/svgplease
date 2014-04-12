@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Open, Save, SVGRoot
+from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Length, Open, Save, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -163,3 +163,11 @@ class TestChangeColor(unittest.TestCase):
                     to_color=Color(255, 0, 0))
             command.execute(execution_context)
             self.assertEqual(t.getroot()[0].attrib["stroke"], "#ff0000")
+
+class TestLength(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(Length(10, "px"), Length(10, "px"))
+        self.assertEqual(Length(10, "px"), Length(10))
+        self.assertNotEqual(Length(10, "cm"), Length(10, "px"))
+        self.assertNotEqual(Length(11, "px"), Length(10, "px"))

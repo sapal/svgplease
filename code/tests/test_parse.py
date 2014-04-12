@@ -168,3 +168,14 @@ class ParseLengthUnit(TestParse):
         self.assertEqual(self.parse("cm").unit, "cm")
         self.assertEqual(self.parse("centimeter").unit, "cm")
         self.assertEqual(self.parse("centimeters").unit, "cm")
+
+class ParseLength(TestParse):
+    tested_class_name = "Length"
+
+    def test_default(self):
+        self.assertEqual(self.parse("10").length, command.Length(10, "px"))
+
+    def test_units(self):
+        self.assertEqual(self.parse("5mm").length, command.Length(5, "mm"))
+        self.assertEqual(self.parse("5", "centimeters").length, command.Length(5, "cm"))
+        self.assertEqual(self.parse("0.5", "of", "pixel").length, command.Length(0.5, "px"))

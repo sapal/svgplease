@@ -87,9 +87,10 @@ class CommandList(Grammar):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 
 class NonNegativeNumber(Grammar):
-    grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), SEPARATOR)
+    # Note that non-negative number doesn't have to consume SEPARATOR
+    grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), OPTIONAL(SEPARATOR))
     def grammar_elem_init(self, sessiondata):
-        self.number = float(self.string[:-len(SEPARATOR)])
+        self.number = float(self[1].string + (self[2].string if self[2] else ""))
 
 class LengthUnit(Grammar):
     grammar = (OR(
@@ -115,3 +116,8 @@ class LengthUnit(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.unit = LengthUnit.unit_map[self[0].string]
 
+class Length(Grammar):
+    grammar = (NonNegativeNumber, OPTIONAL(SEPARATOR),
+            OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
+    def grammar_elem_init(self, sessiondata):
+        self.length = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
