@@ -133,3 +133,16 @@ class ParseChangeColor(TestParse):
                          command.ChangeColor(fill_stroke=command.FillStroke(stroke=True),
                                              from_color=command.Color(10, 10, 10),
                                              to_color=command.Color(255, 255, 255)))
+
+class ParseNonNegativeNumber(TestParse):
+    tested_class_name = "NonNegativeNumber"
+
+    def test_integer(self):
+        self.assertEqual(self.parse("123").number, 123)
+
+    def test_float(self):
+        self.assertEqual(self.parse("1.2").number, 1.2)
+
+    def test_zero(self):
+        self.assertEqual(self.parse("0.0").number, 0.0)
+
