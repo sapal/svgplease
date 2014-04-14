@@ -1,0 +1,5 @@
+open input0.svg then select #circle then move to 100 x 200 y then save to output0.svg
+open input1.svg then select #rect then move to 20mm x 50mm y then save to output1.svg
+open input2.svg then select #line then move to 250 y then save to output2.svg
+open input3.svg then select #ellipse then move to 100 then save to output3.svg
+open input4.svg then select #group then move to 100 200 then save to output4.svg

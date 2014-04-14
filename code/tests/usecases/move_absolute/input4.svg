@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+    viewBox="0 0 500 500" width="500" height="500" id="starter_svg">
+  <g id="group">
+    <circle cx="150" cy="360" r="120" fill="yellow" stroke="black" stroke-width="3" />
+    <rect x="100" y="50" width="400" height="200" fill="blue" />
+  </g>
+</svg>
