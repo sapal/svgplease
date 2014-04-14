@@ -36,12 +36,21 @@ class UsecaseTestLoader(type):
                     input_files = glob.glob(os.path.join(directory, "input{0}.*".format(idx)))
                     expected_output_files = glob.glob(os.path.join(directory, "output{0}.*".format(idx)))
                     with TestDirectory(*input_files) as tempdirname:
-                        svgplease.main.run("test", command.split())
-                        for expected_output_file in expected_output_files:
-                            output_file = os.path.join(
-                                    tempdirname,
-                                    os.path.basename(expected_output_file))
-                            self.assertSameSVG(output_file, expected_output_file)
+                        try:
+                            svgplease.main.run("test", command.split())
+                            for expected_output_file in expected_output_files:
+                                output_file = os.path.join(
+                                        tempdirname,
+                                        os.path.basename(expected_output_file))
+                                self.assertSameSVG(output_file, expected_output_file)
+                        except Exception as e:
+                            if "failed_directory" in dct and dct["failed_directory"]:
+                                failed_directory = os.path.join(dct["failed_directory"], "test{0}".format(idx))
+                                shutil.rmtree(failed_directory, ignore_errors=True)
+                                shutil.copytree(tempdirname, failed_directory)
+                                shutil.copy2(expected_output_file, os.path.join(failed_directory, "expected.svg"))
+                            raise e
+
                 return test
             for i, command in enumerate(open(command_file).readlines()):
                 dct["test_command_{0}".format(i)] = generate_test(command, i)
@@ -57,8 +66,12 @@ class UsecaseTest(unittest.TestCase, metaclass=UsecaseTestLoader):
     Usage:
     >>> class SomeTest(UsecaseTest):
     ...     directory = "some_directory"
+
+    If `failed_directory` is set, then failed test will be copied to the given directory.
+    This is useful for debugging.
     """
     directory = None
+    failed_directory = None
     def assertSameSVG(self, output_file, expected_output_file):
         self.assertTrue(os.path.isfile(output_file))
         content_list = []

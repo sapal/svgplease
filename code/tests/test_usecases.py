@@ -6,3 +6,7 @@ class OpenAndSave(util.UsecaseTest):
 
 class SetColor(util.UsecaseTest):
     directory = "set_color"
+
+class MoveRelative(util.UsecaseTest):
+    directory = "move_relative"
+    failed_directory = "/tmp/failed"
