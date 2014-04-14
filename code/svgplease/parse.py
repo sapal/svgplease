@@ -81,11 +81,6 @@ class ChangeColor(Grammar):
                                            from_color=from_color,
                                            to_color=self[6].color)
 
-class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, Open, Save), sep=("then", SEPARATOR))
-    def grammar_elem_init(self, sessiondata):
-        self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
-
 class NonNegativeNumber(Grammar):
     # Note that non-negative number doesn't have to consume SEPARATOR
     grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), OPTIONAL(SEPARATOR))
@@ -158,3 +153,9 @@ class Select(Grammar):
     grammar = ("select", SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
         self.command = command.Select(self[3].string)
+
+class CommandList(Grammar):
+    grammar = LIST_OF(OR(ChangeColor, Open, Move, Save, Select), sep=("then", SEPARATOR))
+    def grammar_elem_init(self, sessiondata):
+        self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
+

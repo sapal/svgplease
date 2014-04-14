@@ -190,3 +190,9 @@ class Select(object):
 
     def __eq__(self, other):
         return self.id == other.id
+
+    def execute(self, execution_context):
+        new_selection = []
+        for selection in execution_context.selected_nodes:
+            new_selection.extend(selection.findall(".//*[@id='{0}']".format(self.id)))
+        execution_context.selected_nodes = new_selection

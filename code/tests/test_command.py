@@ -184,3 +184,17 @@ class TestSelect(unittest.TestCase):
     def test_eq(self):
         self.assertEqual(Select(id="foo"), Select("foo"))
         self.assertNotEqual(Select("foo"), Select("bar"))
+
+    def test_execute(self):
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "rectangles.svg")) as testdir:
+            root = ElementTree.parse(os.path.join(testdir, "rectangles.svg")).getroot()
+
+            execution_context.selected_nodes = [root]
+            Select("blue").execute(execution_context)
+            self.assertEqual(len(execution_context.selected_nodes), 1)
+            self.assertEqual(execution_context.selected_nodes[0].get("id"), "blue")
+
+            execution_context.selected_nodes = [root]
+            Select("purple").execute(execution_context)
+            self.assertEqual(len(execution_context.selected_nodes), 0)
