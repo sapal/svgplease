@@ -197,33 +197,33 @@ class ParseMove(TestParse):
     tested_class_name = "Move"
 
     def test_simple(self):
-        self.assertEqual(self.parse("by", "10mm", "and", "by", "10", "cm").command,
+        self.assertEqual(self.parse("move", "by", "10mm", "and", "by", "10", "cm").command,
                 command.Move(
                     horizontally=command.Length(10, "mm"),
                     vertically=command.Length(10, "cm")))
-        self.assertEqual(self.parse("5", "and", "by", "10", "centimeters").command,
+        self.assertEqual(self.parse("move", "5", "and", "by", "10", "centimeters").command,
                 command.Move(
                     horizontally=command.Length(5, "px"),
                     vertically=command.Length(10, "cm")))
-        self.assertEqual(self.parse("5", "3").command,
+        self.assertEqual(self.parse("move", "5", "3").command,
                 command.Move(
                     horizontally=command.Length(5, "px"),
                     vertically=command.Length(3, "px")))
 
     def test_direction(self):
-        self.assertEqual(self.parse(*("by 2mm horizontally and by 20 cm vertically".split())).command,
+        self.assertEqual(self.parse(*("move by 2mm horizontally and by 20 cm vertically".split())).command,
                 command.Move(command.Length(2, "mm"), command.Length(20, "cm")))
-        self.assertEqual(self.parse("2mm", "ver", "3", "hor").command,
+        self.assertEqual(self.parse("move", "2mm", "ver", "3", "hor").command,
                 command.Move(command.Length(3), command.Length(2, "mm")))
-        self.assertEqual(self.parse("1cm", "ver", "3").command,
+        self.assertEqual(self.parse("move", "1cm", "ver", "3").command,
                 command.Move(command.Length(3), command.Length(1, "cm")))
-        self.assertEqual(self.parse("1cm", "hor", "3").command,
+        self.assertEqual(self.parse("move", "1cm", "hor", "3").command,
                 command.Move(command.Length(1, "cm"), command.Length(3)))
-        self.assertEqual(self.parse("1cm", "3", "x").command,
+        self.assertEqual(self.parse("move", "1cm", "3", "x").command,
                 command.Move(command.Length(3), command.Length(1, "cm")))
-        self.assertEqual(self.parse("1cm").command,
+        self.assertEqual(self.parse("move", "1cm").command,
                 command.Move(command.Length(1, "cm"), command.Length(0)))
-        self.assertEqual(self.parse("1cm", "y").command,
+        self.assertEqual(self.parse("move", "1cm", "y").command,
                 command.Move(command.Length(0), command.Length(1, "cm")))
 
 class ParseSelect(TestParse):

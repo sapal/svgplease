@@ -123,13 +123,14 @@ class Direction(Grammar):
         self.direction = "horizontally" if self.string[:-len(SEPARATOR)] in ("horizontally", "hor", "x") else "vertically"
 
 class Move(Grammar):
-    grammar = (OPTIONAL("by", SEPARATOR), Length, OPTIONAL(Direction),
+    #TODO: change to distance
+    grammar = ("move", SEPARATOR, OPTIONAL("by", SEPARATOR), Length, OPTIONAL(Direction),
             OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Length, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
-        length1 = self[1].length
-        length2 = self[3][1].length if self[3] else command.Length(0)
-        direction1 = self[2].direction if self[2] else None
-        direction2 = self[3][2].direction if self[3] and self[3][2] else None
+        length1 = self[3].length
+        length2 = self[5][1].length if self[5] else command.Length(0)
+        direction1 = self[4].direction if self[4] else None
+        direction2 = self[5][2].direction if self[5] and self[5][2] else None
         def other_direction(direction):
             if direction == "horizontally":
                 return "vertically"
