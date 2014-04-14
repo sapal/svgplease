@@ -166,7 +166,7 @@ class ChangeColor(CommandBase):
                     change_color(subnode, "stroke")
 
 class Length(object):
-    """Class representing length"""
+    """Class representing length."""
     def __init__(self, number, unit="px"):
         self.number = number
         self.unit = unit
@@ -175,10 +175,18 @@ class Length(object):
         return (self.number, self.unit) == (other.number, other.unit)
 
 class Move(object):
-    """Class representing move command"""
+    """Class representing move command."""
     def __init__(self, horizontally, vertically):
         self.horizontally = horizontally
         self.vertically = vertically
 
     def __eq__(self, other):
         return (self.horizontally, self.vertically) == (other.horizontally, other.vertically)
+
+class Select(object):
+    """Class representing select command."""
+    def __init__(self, id):
+        self.id = id
+
+    def __eq__(self, other):
+        return self.id == other.id

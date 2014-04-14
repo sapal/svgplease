@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Length, Open, Move, Save, SVGRoot
+from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Length, Open, Move, Save, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -178,3 +178,9 @@ class TestMove(unittest.TestCase):
         self.assertEqual(Move(horizontally=Length(10), vertically=Length(5)), Move(Length(10), Length(5)))
         self.assertNotEqual(Move(Length(3), Length(4)), Move(Length(2), Length(4)))
         self.assertNotEqual(Move(Length(3), Length(4)), Move(Length(3), Length(2)))
+
+class TestSelect(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(Select(id="foo"), Select("foo"))
+        self.assertNotEqual(Select("foo"), Select("bar"))

@@ -226,4 +226,11 @@ class ParseMove(TestParse):
         self.assertEqual(self.parse("1cm", "y").command,
                 command.Move(command.Length(0), command.Length(1, "cm")))
 
+class ParseSelect(TestParse):
+    tested_class_name = "Select"
+
+    def test_select(self):
+        self.assertEqual(self.parse("select", "#foo_7").command, command.Select(id="foo_7"))
+        self.assertEqual(self.parse("select", "#foo-bar").command, command.Select(id="foo-bar"))
+
 

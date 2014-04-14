@@ -153,3 +153,8 @@ class Move(Grammar):
             direction1: length1,
             direction2: length2,
             })
+
+class Select(Grammar):
+    grammar = ("select", SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.Select(self[3].string)
