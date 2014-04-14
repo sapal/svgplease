@@ -173,3 +173,12 @@ class Length(object):
 
     def __eq__(self, other):
         return (self.number, self.unit) == (other.number, other.unit)
+
+class Move(object):
+    """Class representing move command"""
+    def __init__(self, horizontally, vertically):
+        self.horizontally = horizontally
+        self.vertically = vertically
+
+    def __eq__(self, other):
+        return (self.horizontally, self.vertically) == (other.horizontally, other.vertically)

@@ -94,10 +94,8 @@ OPACITY_CHANGE:
 
 NUMBER_0_1 = // any float from [0 .. 1]
 
-NUMBER_0_100 = // any float from [0 .. 100]
-
 PERCENT:
-  NUMBER_0_100% 
+  NUMBER% 
 
 FILL_STYLE_CHANGE:
   (none|solid)

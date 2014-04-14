@@ -121,3 +121,35 @@ class Length(Grammar):
             OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
     def grammar_elem_init(self, sessiondata):
         self.length = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
+
+class Direction(Grammar):
+    grammar = (OR("horizontally", "hor", "x", "vertically", "ver", "y"), SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.direction = "horizontally" if self.string[:-len(SEPARATOR)] in ("horizontally", "hor", "x") else "vertically"
+
+class Move(Grammar):
+    grammar = (OPTIONAL("by", SEPARATOR), Length, OPTIONAL(Direction),
+            OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Length, OPTIONAL(Direction)))
+    def grammar_elem_init(self, sessiondata):
+        length1 = self[1].length
+        length2 = self[3][1].length if self[3] else command.Length(0)
+        direction1 = self[2].direction if self[2] else None
+        direction2 = self[3][2].direction if self[3] and self[3][2] else None
+        def other_direction(direction):
+            if direction == "horizontally":
+                return "vertically"
+            else:
+                return "horizontally"
+
+        if direction1 == None and direction2 == None:
+            direction1 = "horizontally"
+            direction2 = "vertically"
+        elif direction1 == None:
+            direction1 = other_direction(direction2)
+        elif direction2 == None:
+            direction2 = other_direction(direction1)
+
+        self.command = command.Move(**{
+            direction1: length1,
+            direction2: length2,
+            })
