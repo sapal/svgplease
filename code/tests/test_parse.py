@@ -63,6 +63,9 @@ class ParseCommandList(TestParse):
     def test_save_command(self):
         self.assertEqual(self.parse("save", "to", "file2.svg").command_list, [command.Save("file2.svg")])
 
+    def test_scale_command(self):
+        self.assertEqual(self.parse("scale", "by", "2").command_list, [command.Scale(2, 2)])
+
     def test_change_color_command(self):
         self.assertEqual(self.parse("change", "color", "to", "#ffffff").command_list,
                 [command.ChangeColor(fill_stroke=command.FillStroke(), to_color=command.Color(255, 255, 255))])
@@ -269,4 +272,5 @@ class ParseScale(TestParse):
         self.assertEqual(self.parse(*("scale 2 40%".split())).command, command.Scale(2, 0.4))
         self.assertEqual(self.parse(*("scale 2 x".split())).command, command.Scale(horizontally=2))
         self.assertEqual(self.parse(*("scale 2 y".split())).command, command.Scale(vertically=2))
+        self.assertEqual(self.parse(*("scale by 2".split())).command, command.Scale(2, 2))
 

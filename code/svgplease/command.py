@@ -228,9 +228,19 @@ class Select(object):
 
 class Scale(object):
     """Class representing scale command."""
-    def __init__(self, horizontally=None, vertically=None):
+    def __init__(self, horizontally=1, vertically=1):
         self.horizontally = horizontally
         self.vertically = vertically
 
     def __eq__(self, other):
         return (self.horizontally, self.vertically) == (other.horizontally, other.vertically)
+
+    def execute(self, execution_context):
+        for selection in execution_context.selected_nodes:
+            transform = selection.get("transform")
+            new_transform = "scale({0},{1}){2}".format(
+                    self.horizontally,
+                    self.vertically,
+                    (" " + transform if transform else ""))
+            selection.set("transform", new_transform)
+

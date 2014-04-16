@@ -9,5 +9,7 @@ class SetColor(util.UsecaseTest):
 
 class MoveRelative(util.UsecaseTest):
     directory = "move_relative"
-    failed_directory = "/tmp/failed"
 
+class Scale(util.UsecaseTest):
+    directory = "scale"
+    failed_directory = "/tmp/failed"

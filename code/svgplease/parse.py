@@ -182,12 +182,12 @@ class Scale(Grammar):
         OPTIONAL("both", SEPARATOR, OPTIONAL("directions", SEPARATOR)),
         (OPTIONAL(Direction), OPTIONAL(OPTIONAL("and", SEPARATOR, OPTIONAL("by", SEPARATOR)), OR(Number, Percent), OPTIONAL(Direction)))))
     def grammar_elem_init(self, sessiondata):
-        both = (self[4].string[:4] in ("", "both"))
+        both = (self[4] is None or self[4].string[:4] in ("", "both"))
         scale1 = self[3].number
         if both:
             self.command = command.Scale(scale1, scale1)
         else:
-            scale2 = None
+            scale2 = 1
             if self[4][1] and self[4][1][1]:
                 scale2 = self[4][1][1].number
             direction1 = self[4][0].direction if self[4][0] else None
@@ -198,16 +198,13 @@ class Scale(Grammar):
                 direction1 = other_direction(direction2)
             elif direction2 == None:
                 direction2 = other_direction(direction1)
-            if scale2 is None:
-                self.command = command.Scale(**{direction1: scale1})
-            else:
-                self.command = command.Scale(**{
-                    direction1: scale1,
-                    direction2: scale2
-                    })
+            self.command = command.Scale(**{
+                direction1: scale1,
+                direction2: scale2
+                })
 
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, Open, Move, Save, Select), sep=("then", SEPARATOR))
+    grammar = LIST_OF(OR(ChangeColor, Open, Move, Save, Scale, Select), sep=("then", SEPARATOR))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

@@ -246,7 +246,22 @@ class TestScale(unittest.TestCase):
 
     def test_eq(self):
         self.assertEqual(Scale(horizontally=2, vertically=3), Scale(2, 3))
-        self.assertEqual(Scale(vertically=3), Scale(None, 3))
-        self.assertEqual(Scale(horizontally=2), Scale(2, None))
+        self.assertEqual(Scale(vertically=3), Scale(1, 3))
+        self.assertEqual(Scale(horizontally=2), Scale(2, 1))
         self.assertNotEqual(Scale(3, 3), Scale(2, 3))
         self.assertNotEqual(Scale(3, 4), Scale(3, 3))
+
+    def test_execute(self):
+        # More usecases are covered by scale usecase test.
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "rectangles.svg")) as testdir:
+            root = ElementTree.parse(os.path.join(testdir, "rectangles.svg")).getroot()
+            rect = root.findall(".//*[@id='blue']")[0]
+            execution_context.selected_nodes = [rect]
+
+            self.assertEqual(rect.get("transform"), None)
+            Scale(2, 3).execute(execution_context)
+            self.assertEqual(rect.get("transform"), "scale(2,3)")
+            Scale(5, 0.5).execute(execution_context)
+            self.assertEqual(rect.get("transform"), "scale(5,0.5) scale(2,3)")
+
