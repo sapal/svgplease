@@ -225,3 +225,12 @@ class Select(object):
         for selection in execution_context.selected_nodes:
             new_selection.extend(selection.findall(".//*[@id='{0}']".format(self.id)))
         execution_context.selected_nodes = new_selection
+
+class Scale(object):
+    """Class representing scale command."""
+    def __init__(self, horizontally=None, vertically=None):
+        self.horizontally = horizontally
+        self.vertically = vertically
+
+    def __eq__(self, other):
+        return (self.horizontally, self.vertically) == (other.horizontally, other.vertically)

@@ -137,6 +137,13 @@ class Direction(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.direction = "horizontally" if self.string[:-len(SEPARATOR)] in ("horizontally", "hor", "x") else "vertically"
 
+def other_direction(direction):
+    """Returns the other direction."""
+    if direction == "horizontally":
+        return "vertically"
+    else:
+        return "horizontally"
+
 class Move(Grammar):
     grammar = ("move", SEPARATOR, OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
             OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Displacement, OPTIONAL(Direction)))
@@ -145,11 +152,6 @@ class Move(Grammar):
         displacement2 = self[5][1].displacement if self[5] else command.Displacement(0)
         direction1 = self[4].direction if self[4] else None
         direction2 = self[5][2].direction if self[5] and self[5][2] else None
-        def other_direction(direction):
-            if direction == "horizontally":
-                return "vertically"
-            else:
-                return "horizontally"
 
         if direction1 == None and direction2 == None:
             direction1 = "horizontally"
@@ -168,6 +170,41 @@ class Select(Grammar):
     grammar = ("select", SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
         self.command = command.Select(self[3].string)
+
+class Percent(Grammar):
+    grammar = (NumberWithoutSeparator, "%", SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.percent = self[0].number
+        self.number = self.percent / 100
+
+class Scale(Grammar):
+    grammar = ("scale", SEPARATOR, OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
+        OPTIONAL("both", SEPARATOR, OPTIONAL("directions", SEPARATOR)),
+        (OPTIONAL(Direction), OPTIONAL(OPTIONAL("and", SEPARATOR, OPTIONAL("by", SEPARATOR)), OR(Number, Percent), OPTIONAL(Direction)))))
+    def grammar_elem_init(self, sessiondata):
+        both = (self[4].string[:4] in ("", "both"))
+        scale1 = self[3].number
+        if both:
+            self.command = command.Scale(scale1, scale1)
+        else:
+            scale2 = None
+            if self[4][1] and self[4][1][1]:
+                scale2 = self[4][1][1].number
+            direction1 = self[4][0].direction if self[4][0] else None
+            direction2 = self[4][1][2].direction if self[4][1] and self[4][1][2] else None
+            if direction1 is None and direction2 is None:
+                direction1, direction2 = "horizontally", "vertically"
+            elif direction1 == None:
+                direction1 = other_direction(direction2)
+            elif direction2 == None:
+                direction2 = other_direction(direction1)
+            if scale2 is None:
+                self.command = command.Scale(**{direction1: scale1})
+            else:
+                self.command = command.Scale(**{
+                    direction1: scale1,
+                    direction2: scale2
+                    })
 
 class CommandList(Grammar):
     grammar = LIST_OF(OR(ChangeColor, Open, Move, Save, Select), sep=("then", SEPARATOR))

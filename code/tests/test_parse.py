@@ -248,4 +248,25 @@ class ParseSelect(TestParse):
         self.assertEqual(self.parse("select", "#foo_7").command, command.Select(id="foo_7"))
         self.assertEqual(self.parse("select", "#foo-bar").command, command.Select(id="foo-bar"))
 
+class ParsePercent(TestParse):
+    tested_class_name = "Percent"
+
+    def test_percent(self):
+        self.assertEqual(self.parse("50%").percent, 50)
+        self.assertEqual(self.parse("200.03%").percent, 200.03)
+        self.assertEqual(self.parse("-50%").percent, -50)
+
+    def test_number(self):
+        self.assertEqual(self.parse("50%").number, 0.50)
+
+class ParseScale(TestParse):
+    tested_class_name = "Scale"
+
+    def test_scale(self):
+        self.assertEqual(self.parse(*("scale by 50% both directions".split())).command, command.Scale(0.5, 0.5))
+        self.assertEqual(self.parse(*("scale by 50% and by 75%".split())).command, command.Scale(0.5, 0.75))
+        self.assertEqual(self.parse(*("scale 2 y 4 x".split())).command, command.Scale(4, 2))
+        self.assertEqual(self.parse(*("scale 2 40%".split())).command, command.Scale(2, 0.4))
+        self.assertEqual(self.parse(*("scale 2 x".split())).command, command.Scale(horizontally=2))
+        self.assertEqual(self.parse(*("scale 2 y".split())).command, command.Scale(vertically=2))
 

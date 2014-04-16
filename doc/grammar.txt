@@ -56,9 +56,9 @@ POSITION:
   NUMBER [[of] LENGTH_UNIT]
 
 SCALE_SPECIFICATION:
-  [by] (NUMBER|PERCENT) [and by] [(NUMBER|PERCENT)]  // horizontally, vertically
+  [by] (NUMBER|PERCENT) [both [directions]]
+  [by] (NUMBER|PERCENT) [and by] (NUMBER|PERCENT)  // horizontally, vertically
   [by] (NUMBER|PERCENT) DIRECTION [and by] [(NUMBER|PERCENT) [DIRECTION]]
-  [by] (NUMBER|PERCENT) both [directions]
   to LENGTH wide [[and] LENGTH tall]
   to LENGTH tall [[and] LENGTH wide]
   

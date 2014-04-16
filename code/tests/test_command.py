@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Save, Select, SVGRoot
+from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Save, Scale, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -241,3 +241,12 @@ class TestSelect(unittest.TestCase):
             execution_context.selected_nodes = [root]
             Select("purple").execute(execution_context)
             self.assertEqual(len(execution_context.selected_nodes), 0)
+
+class TestScale(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(Scale(horizontally=2, vertically=3), Scale(2, 3))
+        self.assertEqual(Scale(vertically=3), Scale(None, 3))
+        self.assertEqual(Scale(horizontally=2), Scale(2, None))
+        self.assertNotEqual(Scale(3, 3), Scale(2, 3))
+        self.assertNotEqual(Scale(3, 4), Scale(3, 3))
