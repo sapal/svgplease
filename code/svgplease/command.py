@@ -4,6 +4,9 @@ import math
 import os
 import re
 
+"""Global DPI (dots per inch) setting."""
+DPI = 120
+
 ElementTree.register_namespace("", "http://www.w3.org/2000/svg")
 
 class CommandBase(object):
@@ -167,12 +170,28 @@ class ChangeColor(CommandBase):
 
 class Length(object):
     """Class representing length."""
+    _in_pixels = {
+            "mm": 0.0393700787 * DPI,
+            "cm": 00.393700787 * DPI,
+            "px": 1,
+            "pt": 1.25,
+            }
     def __init__(self, number, unit="px"):
         self.number = number
         self.unit = unit
 
     def __eq__(self, other):
         return (self.number, self.unit) == (other.number, other.unit)
+
+    def in_pixels(self):
+        """Returns pixel-equivalent of this length."""
+        return Length._in_pixels[self.unit] * self.number
+
+"""Class representing displacement.
+
+The difference from Length is only semantical: Length cannot be negative.
+The implementation is identical."""
+Displacement = Length
 
 class Move(object):
     """Class representing move command."""
@@ -182,6 +201,16 @@ class Move(object):
 
     def __eq__(self, other):
         return (self.horizontally, self.vertically) == (other.horizontally, other.vertically)
+
+    def execute(self, execution_context):
+        for selection in execution_context.selected_nodes:
+            transform = selection.get("transform")
+            new_transform = "translate({0},{1}){2}".format(
+                    self.horizontally.in_pixels(),
+                    self.vertically.in_pixels(),
+                    (" " + transform if transform else ""))
+            selection.set("transform", new_transform)
+
 
 class Select(object):
     """Class representing select command."""

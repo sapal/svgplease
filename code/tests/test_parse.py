@@ -180,6 +180,17 @@ class ParseLength(TestParse):
         self.assertEqual(self.parse("5", "centimeters").length, command.Length(5, "cm"))
         self.assertEqual(self.parse("0.5", "of", "pixel").length, command.Length(0.5, "px"))
 
+class ParseDisplacement(TestParse):
+    tested_class_name = "Displacement"
+
+    def test_default(self):
+        self.assertEqual(self.parse("10").displacement, command.Displacement(10, "px"))
+
+    def test_units(self):
+        self.assertEqual(self.parse("-5mm").displacement, command.Displacement(-5, "mm"))
+        self.assertEqual(self.parse("5", "centimeters").displacement, command.Displacement(5, "cm"))
+        self.assertEqual(self.parse("-0.5", "of", "pixel").displacement, command.Displacement(-0.5, "px"))
+
 class ParseDirection(TestParse):
     tested_class_name = "Direction"
 
@@ -199,32 +210,36 @@ class ParseMove(TestParse):
     def test_simple(self):
         self.assertEqual(self.parse("move", "by", "10mm", "and", "by", "10", "cm").command,
                 command.Move(
-                    horizontally=command.Length(10, "mm"),
-                    vertically=command.Length(10, "cm")))
+                    horizontally=command.Displacement(10, "mm"),
+                    vertically=command.Displacement(10, "cm")))
+        self.assertEqual(self.parse("move", "by", "-10mm", "and", "by", "-10", "cm").command,
+                command.Move(
+                    horizontally=command.Displacement(-10, "mm"),
+                    vertically=command.Displacement(-10, "cm")))
         self.assertEqual(self.parse("move", "5", "and", "by", "10", "centimeters").command,
                 command.Move(
-                    horizontally=command.Length(5, "px"),
-                    vertically=command.Length(10, "cm")))
+                    horizontally=command.Displacement(5, "px"),
+                    vertically=command.Displacement(10, "cm")))
         self.assertEqual(self.parse("move", "5", "3").command,
                 command.Move(
-                    horizontally=command.Length(5, "px"),
-                    vertically=command.Length(3, "px")))
+                    horizontally=command.Displacement(5, "px"),
+                    vertically=command.Displacement(3, "px")))
 
     def test_direction(self):
         self.assertEqual(self.parse(*("move by 2mm horizontally and by 20 cm vertically".split())).command,
-                command.Move(command.Length(2, "mm"), command.Length(20, "cm")))
+                command.Move(command.Displacement(2, "mm"), command.Displacement(20, "cm")))
         self.assertEqual(self.parse("move", "2mm", "ver", "3", "hor").command,
-                command.Move(command.Length(3), command.Length(2, "mm")))
+                command.Move(command.Displacement(3), command.Displacement(2, "mm")))
         self.assertEqual(self.parse("move", "1cm", "ver", "3").command,
-                command.Move(command.Length(3), command.Length(1, "cm")))
+                command.Move(command.Displacement(3), command.Displacement(1, "cm")))
         self.assertEqual(self.parse("move", "1cm", "hor", "3").command,
-                command.Move(command.Length(1, "cm"), command.Length(3)))
+                command.Move(command.Displacement(1, "cm"), command.Displacement(3)))
         self.assertEqual(self.parse("move", "1cm", "3", "x").command,
-                command.Move(command.Length(3), command.Length(1, "cm")))
+                command.Move(command.Displacement(3), command.Displacement(1, "cm")))
         self.assertEqual(self.parse("move", "1cm").command,
-                command.Move(command.Length(1, "cm"), command.Length(0)))
+                command.Move(command.Displacement(1, "cm"), command.Displacement(0)))
         self.assertEqual(self.parse("move", "1cm", "y").command,
-                command.Move(command.Length(0), command.Length(1, "cm")))
+                command.Move(command.Displacement(0), command.Displacement(1, "cm")))
 
 class ParseSelect(TestParse):
     tested_class_name = "Select"

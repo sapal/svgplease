@@ -33,10 +33,15 @@ class Save(Grammar):
         filenames = map(lambda g : g.filename, self[3])
         self.command = command.Save(*filenames)
 
-class Number(Grammar):
-    grammar = (OPTIONAL(OR("+", "-")), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), SEPARATOR)
+class NumberWithoutSeparator(Grammar):
+    grammar = (OPTIONAL(OR("+", "-")), WORD("0-9"), OPTIONAL((".", WORD("0-9"))))
     def grammar_elem_init(self, sessiondata):
-        self.number = float(self.string[:-len(SEPARATOR)])
+        self.number = float(self.string)
+
+class Number(Grammar):
+    grammar = (NumberWithoutSeparator, SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.number = self[0].number
 
 class Color(Grammar):
     #TODO: color names
@@ -81,11 +86,15 @@ class ChangeColor(Grammar):
                                            from_color=from_color,
                                            to_color=self[6].color)
 
-class NonNegativeNumber(Grammar):
-    # Note that non-negative number doesn't have to consume SEPARATOR
-    grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))), OPTIONAL(SEPARATOR))
+class NonNegativeNumberWithoutSeparator(Grammar):
+    grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))))
     def grammar_elem_init(self, sessiondata):
-        self.number = float(self[1].string + (self[2].string if self[2] else ""))
+        self.number = float(self.string)
+
+class NonNegativeNumber(Grammar):
+    grammar = (NonNegativeNumberWithoutSeparator, SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.number = self[0].number
 
 class LengthUnit(Grammar):
     grammar = (OR(
@@ -112,10 +121,16 @@ class LengthUnit(Grammar):
         self.unit = LengthUnit.unit_map[self[0].string]
 
 class Length(Grammar):
-    grammar = (NonNegativeNumber, OPTIONAL(SEPARATOR),
+    grammar = (NonNegativeNumberWithoutSeparator, OPTIONAL(SEPARATOR),
             OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
     def grammar_elem_init(self, sessiondata):
         self.length = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
+
+class Displacement(Grammar):
+    grammar = (NumberWithoutSeparator, OPTIONAL(SEPARATOR),
+            OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
+    def grammar_elem_init(self, sessiondata):
+        self.displacement = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
 
 class Direction(Grammar):
     grammar = (OR("horizontally", "hor", "x", "vertically", "ver", "y"), SEPARATOR)
@@ -123,12 +138,11 @@ class Direction(Grammar):
         self.direction = "horizontally" if self.string[:-len(SEPARATOR)] in ("horizontally", "hor", "x") else "vertically"
 
 class Move(Grammar):
-    #TODO: change to distance
-    grammar = ("move", SEPARATOR, OPTIONAL("by", SEPARATOR), Length, OPTIONAL(Direction),
-            OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Length, OPTIONAL(Direction)))
+    grammar = ("move", SEPARATOR, OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
+            OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Displacement, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
-        length1 = self[3].length
-        length2 = self[5][1].length if self[5] else command.Length(0)
+        displacement1 = self[3].displacement
+        displacement2 = self[5][1].displacement if self[5] else command.Displacement(0)
         direction1 = self[4].direction if self[4] else None
         direction2 = self[5][2].direction if self[5] and self[5][2] else None
         def other_direction(direction):
@@ -146,8 +160,8 @@ class Move(Grammar):
             direction2 = other_direction(direction1)
 
         self.command = command.Move(**{
-            direction1: length1,
-            direction2: length2,
+            direction1: displacement1,
+            direction2: displacement2,
             })
 
 class Select(Grammar):

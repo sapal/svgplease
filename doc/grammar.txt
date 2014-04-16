@@ -66,13 +66,16 @@ DIRECTION:
   (vertically|horizontally|ver|hor|x|y)
 
 MOVE_SPECIFICATION:
-  [by] LENGTH [and by] [LENGTH]  // horizontally, vertically
-  [by] LENGTH DIRECTION [and by] [LENGTH [DIRECTION]]
+  [by] DISPLACEMENT [and by] [DISPLACEMENT]  // horizontally, vertically
+  [by] DISPLACEMENT DIRECTION [and by] [DISPLACEMENT [DIRECTION]]
   to POSITION DIRECTION [and to] [POSITION [DIRECTION]]
   to POINT
 
 LENGTH:
   NON_NEGATIVE_NUMBER [[of] LENGTH_UNIT]
+
+DISPLACEMENT:
+  NUMBER [[of] LENGTH_UNIT]
 
 LENGTH_UNIT:
   (centimeter[s]|millimeter[s]|pixel[s]|point[s]|cm|mm|p|px|pt)

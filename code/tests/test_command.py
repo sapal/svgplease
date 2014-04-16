@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, ExecutionContext, FillStroke, Length, Open, Move, Save, Select, SVGRoot
+from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Save, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -172,12 +172,55 @@ class TestLength(unittest.TestCase):
         self.assertNotEqual(Length(10, "cm"), Length(10, "px"))
         self.assertNotEqual(Length(11, "px"), Length(10, "px"))
 
+    def test_in_pixels(self):
+        global DPI
+        DPI = 120
+        self.assertEqual(Length(10).in_pixels(), 10)
+        self.assertEqual(Length(10, "mm").in_pixels(), 47.24409444)
+        self.assertEqual(Length(10, "cm").in_pixels(), 472.4409444)
+        self.assertEqual(Length(10, "pt").in_pixels(), 12.5)
+
+class TestDisplacement(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(Displacement(10, "px"), Displacement(10, "px"))
+        self.assertEqual(Displacement(-10, "px"), Displacement(-10))
+        self.assertNotEqual(Displacement(10, "cm"), Displacement(10, "px"))
+        self.assertNotEqual(Displacement(-10, "cm"), Displacement(10, "cm"))
+        self.assertNotEqual(Displacement(-11, "px"), Displacement(-10, "px"))
+
+    def test_in_pixels(self):
+        global DPI
+        DPI = 120
+        self.assertEqual(Displacement(10).in_pixels(), 10)
+        self.assertEqual(Displacement(-10, "mm").in_pixels(), -47.24409444)
+        self.assertEqual(Displacement(10, "cm").in_pixels(), 472.4409444)
+        self.assertEqual(Displacement(-10, "pt").in_pixels(), -12.5)
+
 class TestMove(unittest.TestCase):
 
     def test_eq(self):
         self.assertEqual(Move(horizontally=Length(10), vertically=Length(5)), Move(Length(10), Length(5)))
         self.assertNotEqual(Move(Length(3), Length(4)), Move(Length(2), Length(4)))
         self.assertNotEqual(Move(Length(3), Length(4)), Move(Length(3), Length(2)))
+
+    def test_execute(self):
+        # More usecases are covered by move-relative usecase test.
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "rectangles.svg")) as testdir:
+            root = ElementTree.parse(os.path.join(testdir, "rectangles.svg")).getroot()
+            rect = root.findall(".//*[@id='blue']")[0]
+            execution_context.selected_nodes = [rect]
+
+            self.assertEqual(rect.get("transform"), None)
+            Move(Length(10), Length(20)).execute(execution_context)
+            self.assertEqual(rect.get("transform"), "translate(10,20)")
+            Move(Length(30), Length(40)).execute(execution_context)
+            self.assertEqual(rect.get("transform"), "translate(30,40) translate(10,20)")
+            rect.set("transform", None)
+            Move(Length(20, "mm"), Length(3, "cm")).execute(execution_context)
+            self.assertEqual(rect.get("transform"), "translate(94.48818888,141.73228332)")
+
 
 class TestSelect(unittest.TestCase):
 
