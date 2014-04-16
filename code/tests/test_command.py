@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Save, Scale, Select, SVGRoot
+from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -265,3 +265,20 @@ class TestScale(unittest.TestCase):
             Scale(5, 0.5).execute(execution_context)
             self.assertEqual(rect.get("transform"), "scale(5,0.5) scale(2,3)")
 
+class TestRemove(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(Remove(), Remove())
+
+    def test_execute(self):
+        # More usecases are covered by scale usecase test.
+        execution_context = ExecutionContext()
+        with util.TestDirectory(os.path.join(util.TEST_DATA, "rectangles.svg")) as testdir:
+            root = ElementTree.parse(os.path.join(testdir, "rectangles.svg")).getroot()
+            execution_context.svg_roots = [SVGRoot(root, "rectangle.svg")]
+            rect = root.findall(".//*[@id='blue']")[0]
+            execution_context.selected_nodes = [rect]
+
+            Remove().execute(execution_context)
+            self.assertEqual(len(execution_context.selected_nodes), 0)
+            self.assertEqual(len(root.findall(".//*[@id='blue']")), 0)

@@ -203,8 +203,13 @@ class Scale(Grammar):
                 direction2: scale2
                 })
 
+class Remove(Grammar):
+    grammar = ("remove", SEPARATOR, OPTIONAL("selected", SEPARATOR))
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.Remove()
+
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, Open, Move, Save, Scale, Select), sep=("then", SEPARATOR))
+    grammar = LIST_OF(OR(ChangeColor, Open, Move, Remove, Save, Scale, Select), sep=("then", SEPARATOR))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

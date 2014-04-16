@@ -244,3 +244,26 @@ class Scale(object):
                     (" " + transform if transform else ""))
             selection.set("transform", new_transform)
 
+class Remove(object):
+    """Class representing remove command."""
+
+    def __eq__(self, other):
+        return True
+
+    def execute(self, execution_context):
+        parent_map = {}
+        for svg_root in execution_context.svg_roots:
+            prev = None
+            for p in svg_root.root_element.iter():
+                for c in p:
+                    parent_map[c] = (p, prev)
+                    prev = c
+                prev = p
+        for selection in execution_context.selected_nodes:
+            (parent, prev) = parent_map.get(selection, None)
+            if parent is not None:
+                if prev is not None:
+                    prev.tail = selection.tail
+                parent.remove(selection)
+        execution_context.selected_nodes = []
+

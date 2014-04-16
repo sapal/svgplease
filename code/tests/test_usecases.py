@@ -12,4 +12,7 @@ class MoveRelative(util.UsecaseTest):
 
 class Scale(util.UsecaseTest):
     directory = "scale"
+
+class Remove(util.UsecaseTest):
+    directory = "remove"
     failed_directory = "/tmp/failed"

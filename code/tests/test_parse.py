@@ -60,6 +60,9 @@ class ParseCommandList(TestParse):
     def test_open_command(self):
         self.assertEqual(self.parse("open", "file.svg").command_list, [command.Open("file.svg")])
 
+    def test_remove_command(self):
+        self.assertEqual(self.parse("remove", "selected").command_list, [command.Remove()])
+
     def test_save_command(self):
         self.assertEqual(self.parse("save", "to", "file2.svg").command_list, [command.Save("file2.svg")])
 
@@ -274,3 +277,9 @@ class ParseScale(TestParse):
         self.assertEqual(self.parse(*("scale 2 y".split())).command, command.Scale(vertically=2))
         self.assertEqual(self.parse(*("scale by 2".split())).command, command.Scale(2, 2))
 
+class ParseRemove(TestParse):
+    tested_class_name = "Remove"
+
+    def test_remove(self):
+        self.assertEqual(self.parse("remove").command, command.Remove())
+        self.assertEqual(self.parse("remove", "selected").command, command.Remove())
