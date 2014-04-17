@@ -346,4 +346,13 @@ class Complete(unittest.TestCase):
             "keyword": ["then"],
             })
 
+    def test_complete_open(self):
+        self.assertCompletionEqual(["open"], {
+            "keyword": ["file"],
+            "file": ["file.svg"],
+            })
+
+        self.assertCompletionEqual(["open", "file"], {
+            "file": ["file.svg"],
+            })
 

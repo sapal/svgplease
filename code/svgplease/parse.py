@@ -46,14 +46,36 @@ def DirectionKeyword(keyword):
 def UnitKeyword(keyword):
     return KeywordBase(keyword, "unit")
 
+class NormalFilename(Grammar):
+    grammar = (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.filename = self.string[:-len(SEPARATOR)]
+    grammar_error_override = True
+    type = "file"
+    completions = ["file.svg"]
+    def prefix_matches(prefix):
+        return True
+
+class AnyFilename(Grammar):
+    grammar = (ANY_EXCEPT(SEPARATOR), SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.filename = self.string[:-len(SEPARATOR)]
+    grammar_error_override = True
+    type = "file"
+    completions = ["file.svg"]
+    def prefix_matches(prefix):
+        return True
+
+class PrefixedFilename(Grammar):
+    grammar = (Keyword("file"), AnyFilename)
+    def grammar_elem_init(self, sessiondata):
+        self.filename = self[1].filename
+
 class Filename(Grammar):
-    grammar = OR(
-            (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR),
-            ("file", SEPARATOR, ANY_EXCEPT(SEPARATOR), SEPARATOR))
+    grammar = OR(NormalFilename, PrefixedFilename)
     grammar_whitespace_mode = "explicit"
     def grammar_elem_init(self, sessiondata):
-        elements = self[0].elements
-        self.filename = elements[0].string if len(elements) == 2 else elements[2].string
+        self.filename = self[0].filename
 
 class Open(Grammar):
     grammar = (CommandKeyword("open"), ONE_OR_MORE(Filename))
@@ -108,7 +130,7 @@ class Color(Grammar):
         self.color = command.Color(*rgb, alpha=alpha)
 
     # TODO: more intelligent completion
-    def prefix_matches(self):
+    def prefix_matches(prefix):
         return True
 
     completions = ["#rrggbb", "#rrggbbaa"]
