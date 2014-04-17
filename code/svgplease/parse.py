@@ -40,6 +40,12 @@ def OptionalKeyword(keyword):
     """Literal optional keyword"""
     return KeywordBase(keyword, "optional_keyword", optional=True)
 
+def DirectionKeyword(keyword):
+    return KeywordBase(keyword, "direction")
+
+def UnitKeyword(keyword):
+    return KeywordBase(keyword, "unit")
+
 class Filename(Grammar):
     grammar = OR(
             (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR),
@@ -65,6 +71,12 @@ class NumberWithoutSeparator(Grammar):
     grammar = (OPTIONAL(OR("+", "-")), WORD("0-9"), OPTIONAL((".", WORD("0-9"))))
     def grammar_elem_init(self, sessiondata):
         self.number = float(self.string)
+
+    grammar_error_override = True
+    type = "number"
+    def prefix_matches(prefix):
+        return True
+    completions = ["-0.5", "10"]
 
 class Number(Grammar):
     grammar = (NumberWithoutSeparator, SEPARATOR)
@@ -135,12 +147,12 @@ class NonNegativeNumber(Grammar):
         self.number = self[0].number
 
 class LengthUnit(Grammar):
-    grammar = (OR(
-        OR("px", "pixel", "pixels"),
-        OR("pt", "point", "points"),
-        OR("mm", "millimeter", "millimeters"),
-        OR("cm", "centimeter", "centimeters")
-        ), SEPARATOR)
+    grammar = OR(
+        OR(UnitKeyword("px"), UnitKeyword("pixel"), UnitKeyword("pixels")),
+        OR(UnitKeyword("pt"), UnitKeyword("point"), UnitKeyword("points")),
+        OR(UnitKeyword("mm"), UnitKeyword("millimeter"), UnitKeyword("millimeters")),
+        OR(UnitKeyword("cm"), UnitKeyword("centimeter"), UnitKeyword("centimeters"))
+        )
     unit_map = {
             "px": "px",
             "pixel": "px",
@@ -156,7 +168,7 @@ class LengthUnit(Grammar):
             "centimeters": "cm",
         }
     def grammar_elem_init(self, sessiondata):
-        self.unit = LengthUnit.unit_map[self[0].string]
+        self.unit = LengthUnit.unit_map[self.string[:-len(SEPARATOR)]]
 
 class Length(Grammar):
     grammar = (NonNegativeNumberWithoutSeparator, OPTIONAL(SEPARATOR),
@@ -171,7 +183,9 @@ class Displacement(Grammar):
         self.displacement = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
 
 class Direction(Grammar):
-    grammar = (OR("horizontally", "hor", "x", "vertically", "ver", "y"), SEPARATOR)
+    grammar = OR(
+        DirectionKeyword("horizontally"), DirectionKeyword("hor"), DirectionKeyword("x"),
+        DirectionKeyword("vertically"), DirectionKeyword("ver"), DirectionKeyword("y"))
     def grammar_elem_init(self, sessiondata):
         self.direction = "horizontally" if self.string[:-len(SEPARATOR)] in ("horizontally", "hor", "x") else "vertically"
 
@@ -183,13 +197,13 @@ def other_direction(direction):
         return "horizontally"
 
 class Move(Grammar):
-    grammar = (CommandKeyword("move"), OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
-            OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Displacement, OPTIONAL(Direction)))
+    grammar = (CommandKeyword("move"), OptionalKeyword("by"), Displacement, OPTIONAL(Direction),
+            OPTIONAL(OptionalKeyword("and"), OptionalKeyword("by"), Displacement, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
         displacement1 = self[2].displacement
-        displacement2 = self[4][1].displacement if self[4] else command.Displacement(0)
+        displacement2 = self[4][2].displacement if self[4] else command.Displacement(0)
         direction1 = self[3].direction if self[3] else None
-        direction2 = self[4][2].direction if self[4] and self[4][2] else None
+        direction2 = self[4][3].direction if self[4] and self[4][3] else None
 
         if direction1 == None and direction2 == None:
             direction1 = "horizontally"

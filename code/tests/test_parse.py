@@ -332,4 +332,18 @@ class Complete(unittest.TestCase):
             "color": ["#rrggbb", "#rrggbbaa"],
             })
 
+    def test_complete_move(self):
+        self.assertCompletionEqual(["move"], {
+            "optional_keyword": ["by"],
+            "number": ["-0.5", "10"],
+            })
+
+        self.assertCompletionEqual(["move", "10"], {
+            "direction": ["hor", "horizontally", "ver", "vertically", "x", "y"],
+            "unit": ["centimeter", "centimeters", "cm", "millimeter", "millimeters", "mm", "pixel", "pixels", "point", "points", "pt", "px"],
+            "optional_keyword": ["and", "by"],
+            "number": ["-0.5", "10"],
+            "keyword": ["then"],
+            })
+
 
