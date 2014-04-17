@@ -12,6 +12,28 @@ def join_tokens(tokens):
     else:
         return ""
 
+def KeywordBase(keyword, type):
+    """Base for all *Keyword functions below"""
+    grammar = LITERAL(keyword)
+    grammar.completions = [keyword]
+    grammar.type = type
+    def prefix_matches(prefix):
+        return keyword[:len(prefix)] == prefix
+    grammar.prefix_matches = prefix_matches
+    return grammar
+
+def CommandKeyword(keyword):
+    """Literal command keyword"""
+    return KeywordBase(keyword, "command")
+
+def Keyword(keyword):
+    """Literal non-command keyword"""
+    return KeywordBase(keyword, "keyword")
+
+def OptionalKeyword(keyword):
+    """Literal optional keyword"""
+    return KeywordBase(keyword, "optional_keyword")
+
 class Filename(Grammar):
     grammar = OR(
             (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR),
@@ -22,13 +44,13 @@ class Filename(Grammar):
         self.filename = elements[0].string if len(elements) == 2 else elements[2].string
 
 class Open(Grammar):
-    grammar = ("open", SEPARATOR, ONE_OR_MORE(Filename))
+    grammar = (CommandKeyword("open"), SEPARATOR, ONE_OR_MORE(Filename))
     def grammar_elem_init(self, sessiondata):
         filenames = map(lambda g : g.filename, self[2])
         self.command = command.Open(*filenames)
 
 class Save(Grammar):
-    grammar = ("save", SEPARATOR, OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
+    grammar = (CommandKeyword("save"), SEPARATOR, OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
     def grammar_elem_init(self, sessiondata):
         filenames = map(lambda g : g.filename, self[3])
         self.command = command.Save(*filenames)
@@ -77,7 +99,7 @@ class FillStroke(Grammar):
         self.fill_stroke = command.FillStroke(fill=fill, stroke=stroke)
 
 class ChangeColor(Grammar):
-    grammar = ("change", SEPARATOR, FillStroke, OPTIONAL(("color", SEPARATOR)),
+    grammar = (CommandKeyword("change"), SEPARATOR, FillStroke, OPTIONAL(("color", SEPARATOR)),
                OPTIONAL(OPTIONAL(("from", SEPARATOR)), Color),
                OPTIONAL(("to", SEPARATOR)), Color)
     def grammar_elem_init(self, sessiondata):
@@ -145,7 +167,7 @@ def other_direction(direction):
         return "horizontally"
 
 class Move(Grammar):
-    grammar = ("move", SEPARATOR, OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
+    grammar = (CommandKeyword("move"), SEPARATOR, OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
             OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Displacement, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
         displacement1 = self[3].displacement
@@ -167,7 +189,7 @@ class Move(Grammar):
             })
 
 class Select(Grammar):
-    grammar = ("select", SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
+    grammar = (CommandKeyword("select"), SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
         self.command = command.Select(self[3].string)
 
@@ -178,7 +200,7 @@ class Percent(Grammar):
         self.number = self.percent / 100
 
 class Scale(Grammar):
-    grammar = ("scale", SEPARATOR, OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
+    grammar = (CommandKeyword("scale"), SEPARATOR, OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
         OPTIONAL("both", SEPARATOR, OPTIONAL("directions", SEPARATOR)),
         (OPTIONAL(Direction), OPTIONAL(OPTIONAL("and", SEPARATOR, OPTIONAL("by", SEPARATOR)), OR(Number, Percent), OPTIONAL(Direction)))))
     def grammar_elem_init(self, sessiondata):
@@ -204,12 +226,31 @@ class Scale(Grammar):
                 })
 
 class Remove(Grammar):
-    grammar = ("remove", SEPARATOR, OPTIONAL("selected", SEPARATOR))
+    grammar = (CommandKeyword("remove"), SEPARATOR, OPTIONAL(OptionalKeyword("selected"), SEPARATOR))
     def grammar_elem_init(self, sessiondata):
         self.command = command.Remove()
 
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, Open, Move, Remove, Save, Scale, Select), sep=("then", SEPARATOR))
+    grammar = LIST_OF(OR(ChangeColor, Move, Open, Remove, Save, Scale, Select), sep=(Keyword("then"), SEPARATOR))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 
+def complete(*tokens):
+    text = join_tokens(tokens) + SEPARATOR
+    try:
+        CommandList.parser().parse_text(text, eof=True, matchtype="complete")
+    except ParseError as e:
+        suffix = text[e.char:].rstrip(SEPARATOR)
+        print(e)
+        print(e.expected)
+        completions = {}
+        for grammar in e.expected:
+            if not "prefix_matches" in dir(grammar) or not grammar.prefix_matches(suffix):
+                continue
+            if grammar.type not in completions:
+                completions[grammar.type] = []
+            completions[grammar.type].extend(grammar.completions)
+        sorted_completions = {}
+        for key, value in completions.items():
+            sorted_completions[key] = sorted(value)
+        return sorted_completions

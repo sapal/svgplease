@@ -283,3 +283,34 @@ class ParseRemove(TestParse):
     def test_remove(self):
         self.assertEqual(self.parse("remove").command, command.Remove())
         self.assertEqual(self.parse("remove", "selected").command, command.Remove())
+
+class Complete(unittest.TestCase):
+
+    def assertCompletionEqual(self, tokens, expected_completion):
+        self.assertEqual(svgplease.parse.complete(*tokens), expected_completion)
+
+    def assertCompletionContains(self, tokens, expected_completion):
+        completion = svgplease.parse.complete(*tokens)
+        print(completion, expected_completion)
+        self.assertTrue(all(item in completion.items() for item in expected_completion.items()))
+
+    def test_complete_command(self):
+        self.assertCompletionEqual([], {
+            "command": ["change", "move", "open", "remove", "save", "scale", "select"]
+            })
+
+        self.assertCompletionEqual(["s"], {
+            "command": ["save", "scale", "select"]
+            })
+
+    def test_complete_commands(self):
+        self.assertCompletionContains(["remove"], {
+            "keyword": ["then"]
+            })
+
+    def test_complete_remove(self):
+        self.assertCompletionContains(["remove"], {
+            "optional_keyword": ["selected"]
+            })
+
+
