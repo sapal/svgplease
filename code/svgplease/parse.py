@@ -33,6 +33,9 @@ def Keyword(keyword):
     """Literal non-command keyword"""
     return KeywordBase(keyword, "keyword")
 
+def FillStrokeKeyword(keyword):
+    return KeywordBase(keyword, "fill_or_stroke")
+
 def OptionalKeyword(keyword):
     """Literal optional keyword"""
     return KeywordBase(keyword, "optional_keyword", optional=True)
@@ -78,6 +81,7 @@ class Color(Grammar):
                    ("2", WORD("0-4", "0-9", min=2, max=2)),
                    (OPTIONAL(WORD("0-1", min=1, max=1)), WORD("0-9", min=0, max=2))),
                 OPTIONAL(WHITESPACE)), sep=",", min=3, max=3), ")", SEPARATOR))
+    grammar_error_override = True
 
     def grammar_elem_init(self, sessiondata):
         alpha = None
@@ -91,20 +95,29 @@ class Color(Grammar):
             rgb = map(lambda d : int(d.strip()), value.split(","))
         self.color = command.Color(*rgb, alpha=alpha)
 
+    # TODO: more intelligent completion
+    def prefix_matches(self):
+        return True
+
+    completions = ["#rrggbb", "#rrggbbaa"]
+
+    type = "color"
+
+
 class FillStroke(Grammar):
     grammar = OR(EMPTY,
-            (OR(("fill", OPTIONAL((OPTIONAL((SEPARATOR, "and")), (SEPARATOR, "stroke")))),
-                ("stroke", OPTIONAL((OPTIONAL((SEPARATOR, "and")), (SEPARATOR, "fill"))))),
-             SEPARATOR))
+            OR((FillStrokeKeyword("fill"), OPTIONAL(OptionalKeyword("and"), FillStrokeKeyword("stroke"))),
+                (FillStrokeKeyword("stroke"), OPTIONAL(OptionalKeyword("and"), FillStrokeKeyword("fill")))))
+
     def grammar_elem_init(self, sessiondata):
         fill = True if "fill" in self.string else None
         stroke = True if "stroke" in self.string else None
         self.fill_stroke = command.FillStroke(fill=fill, stroke=stroke)
 
 class ChangeColor(Grammar):
-    grammar = (CommandKeyword("change"), FillStroke, OPTIONAL(("color", SEPARATOR)),
-               OPTIONAL(OPTIONAL(("from", SEPARATOR)), Color),
-               OPTIONAL(("to", SEPARATOR)), Color)
+    grammar = (CommandKeyword("change"), FillStroke, OptionalKeyword("color"),
+               OPTIONAL(OptionalKeyword("from"), Color),
+               OptionalKeyword("to"), Color)
     def grammar_elem_init(self, sessiondata):
         from_color = None if self[3] is None else self[3][1].color
         self.command = command.ChangeColor(fill_stroke=self[1].fill_stroke,
@@ -246,6 +259,7 @@ def complete(*tokens):
         suffix = text[e.char:].rstrip(SEPARATOR)
         completions = {}
         for grammar in e.expected:
+            print(str(grammar) if "type" not in dir(grammar) else grammar.type)
             if not "prefix_matches" in dir(grammar) or not grammar.prefix_matches(suffix):
                 continue
             if grammar.type not in completions:

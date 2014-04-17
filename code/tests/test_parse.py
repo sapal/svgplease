@@ -313,4 +313,23 @@ class Complete(unittest.TestCase):
             "optional_keyword": ["selected"]
             })
 
+    def test_complete_change(self):
+        self.assertCompletionEqual(["change"], {
+            "fill_or_stroke": ["fill", "stroke"],
+            "optional_keyword": ["color", "from", "to"],
+            "color": ["#rrggbb", "#rrggbbaa"],
+            })
+
+        self.assertCompletionEqual(["change", "fill"], {
+            "fill_or_stroke": ["stroke"],
+            "optional_keyword": ["and", "color", "from", "to"],
+            "color": ["#rrggbb", "#rrggbbaa"],
+            })
+
+        self.assertCompletionEqual(["change", "stroke"], {
+            "fill_or_stroke": ["fill"],
+            "optional_keyword": ["and", "color", "from", "to"],
+            "color": ["#rrggbb", "#rrggbbaa"],
+            })
+
 
