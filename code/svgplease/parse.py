@@ -244,8 +244,6 @@ def complete(*tokens):
         CommandList.parser().parse_text(text, eof=True, matchtype="complete")
     except ParseError as e:
         suffix = text[e.char:].rstrip(SEPARATOR)
-        print(e)
-        print(e.expected)
         completions = {}
         for grammar in e.expected:
             if not "prefix_matches" in dir(grammar) or not grammar.prefix_matches(suffix):
