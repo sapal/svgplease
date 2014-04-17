@@ -341,7 +341,7 @@ class Complete(unittest.TestCase):
         self.assertCompletionEqual(["move", "10"], {
             "direction": ["hor", "horizontally", "ver", "vertically", "x", "y"],
             "unit": ["centimeter", "centimeters", "cm", "millimeter", "millimeters", "mm", "pixel", "pixels", "point", "points", "pt", "px"],
-            "optional_keyword": ["and", "by", "of"],
+            "optional_keyword": ["and", "of"],
             "number": ["-0.5", "10"],
             "keyword": ["then"],
             })
@@ -366,5 +366,20 @@ class Complete(unittest.TestCase):
             "optional_keyword": ["to"],
             "keyword": ["file"],
             "file": ["file.svg"],
+            })
+
+    def test_complete_scale(self):
+        self.assertCompletionEqual(["scale"], {
+            "optional_keyword": ["by"],
+            "number": ["-0.5", "10"],
+            "percent": ["-25%", "150%"],
+            })
+
+        self.assertCompletionEqual(["scale", "by", "2"], {
+            "optional_keyword": ["and", "both"],
+            "direction": ["hor", "horizontally", "ver", "vertically", "x", "y"],
+            "number": ["-0.5", "10"],
+            "percent": ["-25%", "150%"],
+            "keyword": ["then"],
             })
 

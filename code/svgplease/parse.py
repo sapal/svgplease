@@ -12,39 +12,50 @@ def join_tokens(tokens):
     else:
         return ""
 
-def KeywordBase(keyword, type, optional=False):
+def KeywordBase(keywords, type, optional=False):
     """Base for all *Keyword functions below"""
-    grammar = GRAMMAR(LITERAL(keyword), LITERAL(SEPARATOR))
-    if optional:
-        grammar = OPTIONAL(grammar)
+    grammar_list = []
+    for keyword in keywords:
+        grammar_list.append(LITERAL(keyword))
+        grammar_list.append(LITERAL(SEPARATOR))
+    if not optional:
+        grammar = GRAMMAR(*grammar_list)
+    else:
+        grammar = OPTIONAL(GRAMMAR(*grammar_list[-2:]))
+        for i in range(len(grammar_list)-2, 0, -2):
+            grammar = OPTIONAL(GRAMMAR(*grammar_list[i-2:i]), grammar)
     grammar.grammar_error_override = True
-    grammar.completions = [keyword]
+    grammar.completions = [keywords[0]]
     grammar.type = type
     def prefix_matches(prefix):
-        return keyword[:len(prefix)] == prefix
+        return SEPARATOR.join(keywords)[:len(prefix)] == prefix
     grammar.prefix_matches = prefix_matches
     return grammar
 
 def CommandKeyword(keyword):
     """Literal command keyword"""
-    return KeywordBase(keyword, "command")
+    return KeywordBase([keyword], type="command")
 
 def Keyword(keyword):
     """Literal non-command keyword"""
-    return KeywordBase(keyword, "keyword")
+    return KeywordBase([keyword], type="keyword")
 
 def FillStrokeKeyword(keyword):
-    return KeywordBase(keyword, "fill_or_stroke")
+    return KeywordBase([keyword], type="fill_or_stroke")
 
 def OptionalKeyword(keyword):
     """Literal optional keyword"""
-    return KeywordBase(keyword, "optional_keyword", optional=True)
+    return KeywordBase([keyword], type="optional_keyword", optional=True)
 
 def DirectionKeyword(keyword):
-    return KeywordBase(keyword, "direction")
+    return KeywordBase([keyword], type="direction")
 
 def UnitKeyword(keyword):
-    return KeywordBase(keyword, "unit")
+    return KeywordBase([keyword], type="unit")
+
+def MultipleOptionalKeyword(*keywords):
+    """Optional keyword that matches any prefix of given keywords"""
+    return KeywordBase(keywords, "optional_keyword", optional=True)
 
 class NormalFilename(Grammar):
     grammar = (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR)
@@ -220,12 +231,12 @@ def other_direction(direction):
 
 class Move(Grammar):
     grammar = (CommandKeyword("move"), OptionalKeyword("by"), Displacement, OPTIONAL(Direction),
-            OPTIONAL(OptionalKeyword("and"), OptionalKeyword("by"), Displacement, OPTIONAL(Direction)))
+            OPTIONAL(MultipleOptionalKeyword("and", "by"), Displacement, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
         displacement1 = self[2].displacement
-        displacement2 = self[4][2].displacement if self[4] else command.Displacement(0)
+        displacement2 = self[4][1].displacement if self[4] else command.Displacement(0)
         direction1 = self[3].direction if self[3] else None
-        direction2 = self[4][3].direction if self[4] and self[4][3] else None
+        direction2 = self[4][2].direction if self[4] and self[4][2] else None
 
         if direction1 == None and direction2 == None:
             direction1 = "horizontally"
@@ -250,11 +261,16 @@ class Percent(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.percent = self[0].number
         self.number = self.percent / 100
+    grammar_error_override = True
+    type = "percent"
+    def prefix_matches(prefix):
+        return True
+    completions = ["-25%", "150%"]
 
 class Scale(Grammar):
-    grammar = (CommandKeyword("scale"), OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
-        OPTIONAL("both", SEPARATOR, OPTIONAL("directions", SEPARATOR)),
-        (OPTIONAL(Direction), OPTIONAL(OPTIONAL("and", SEPARATOR, OPTIONAL("by", SEPARATOR)), OR(Number, Percent), OPTIONAL(Direction)))))
+    grammar = (CommandKeyword("scale"), OptionalKeyword("by"), OR(Number, Percent), OR(
+        MultipleOptionalKeyword("both", "directions"),
+        (OPTIONAL(Direction), OPTIONAL(MultipleOptionalKeyword("and", "by"), OR(Number, Percent), OPTIONAL(Direction)))))
     def grammar_elem_init(self, sessiondata):
         both = (self[3] is None or self[3].string[:4] in ("", "both"))
         scale1 = self[2].number
