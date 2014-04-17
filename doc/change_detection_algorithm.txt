@@ -1,0 +1,127 @@
+How does the change detection algorithm work:
+
+0. Change detection algorithm is given two files: BASE and TARGET. It should compute what changes were made between these two files. It should be possible to apply these changes to another file (OTHER) later on.
+1. All nodes are identified by their id. If an element doesn't have an id, it is assumed that it has an unique id - different from all the other elements. The only exception is the topmost "svg" element - it is assumed that it corresponds to the topmost "svg" element in the TARGET file.
+2. Every element is either:
+    a) left in place: it occurs both in BASE and TARGET and has the same parent in both
+    b) moved: it occurs both in BASE and TARGET, but has different parents
+    c) deleted: it occurs only in BASE
+    d) added: it occurs only in TARGET
+3. Attribute changes are computed by finding, for every attribute separately, the highest possible element that either:
+    a) for every element in it's subtree, the attribute value is set to Y
+    b) for every element in it's subtree, the attribute value is changed from X to Y
+    c) certain element's attribute value is set to Y
+    Note that in (a) and (b) if an element doesn't have this attribute, it is left unchanged.
+4. Applying the changes to the OTHER file is done in the following way:
+    a) apply every possible change from 2.b, 2.c or 2.d. Applying these changes sometimes needs special handling:
+        I. if the element was deleted (2.c) or moved (2.b), but doesn't exist in the OTHER file - the change is skipped.
+        II. if the element was moved (2.b) or added (2.d), but it's parent doesn't exist in the OTHER file - it should be attached to the lowest ancestor from TARGET file that exists in the OTHER file.
+        III. the moved (2.b) or added (2.d) element should be inserted after the first sibling that was before it in the TARGET file and exists in the OTHER file. If such sibling doesn't exist, the moved or added element should be inserted as the first child. If rule II applies, instead of considering element's siblings, siblings of the appropriate ancestor should be considered.
+    b) apply every possible change from 3. If the element to which the change should be applied doesn't exist, the change should be "propagated" to it's children recursively (in case 3.a and 3.b) or skipped (in case 3.c).
+
+Examples:
+Note: most of attributes were skipped for clarity.
+
+2. Tree changes:
+    BASE:
+    <svg>
+        <g id="a">
+            <rect id="a1"/>
+            <rect id="a2"/>
+        </g>
+        <g id="b">
+            <circle id="b1"/>
+        </g>
+    </svg>
+
+    2.b - moved element:
+    <svg>
+        <g id="a">
+            <rect id="a2"/>
+        </g>
+        <g id="b">
+            <circle id="b1"/>
+            <rect id="a1"/>
+        </g>
+    </svg>
+    Element #a1 was moved to group #b.
+
+    2.c - deleted element:
+    <svg>
+        <g id="a">
+            <rect id="a2"/>
+        </g>
+        <g id="b">
+            <circle id="b1"/>
+        </g>
+    </svg>
+    Element #a1 was deleted.
+
+    2.d - added element:
+    <svg>
+        <g id="a">
+            <rect id="a1"/>
+            <rect id="a3"/>
+            <rect id="a2"/>
+        </g>
+        <g id="b">
+            <circle id="b1"/>
+        </g>
+    </svg>
+    Element #a3 was added.
+
+3. Attribute changes:
+    BASE:
+    <svg>
+        <g id="a">
+            <rect id="a1" fill-color="red"/>
+            <rect id="a2" fill-color="blue"/>
+        </g>
+        <g id="b">
+            <circle id="b1" fill-color="yellow"/>
+            <circle id="b2" fill-color="red"/>
+            <circle id="b3"/>
+        </g>
+    </svg>
+
+    3.a - set attribute value
+    <svg>
+        <g id="a">
+            <rect id="a1" fill-color="green"/>
+            <rect id="a2" fill-color="green"/>
+        </g>
+        <g id="b">
+            <circle id="b1" fill-color="yellow"/>
+            <circle id="b2" fill-color="red"/>
+            <circle id="b3"/>
+        </g>
+    </svg>
+    In the subtree of #a is modified to set fill-color to green.
+    
+    3.b - change attribute value
+    <svg>
+        <g id="a">
+            <rect id="a1" fill-color="green"/>
+            <rect id="a2" fill-color="blue"/>
+        </g>
+        <g id="b">
+            <circle id="b1" fill-color="yellow"/>
+            <circle id="b2" fill-color="green"/>
+            <circle id="b3"/>
+        </g>
+    </svg>
+    In the subtree of root "svg" element, all fill-color values were changed from red to green.
+
+    3.c - set attribute value
+    <svg>
+        <g id="a">
+            <rect id="a1" fill-color="red"/>
+            <rect id="a2" fill-color="blue"/>
+        </g>
+        <g id="b">
+            <circle id="b1" fill-color="yellow"/>
+            <circle id="b2" fill-color="red"/>
+            <circle id="b3" fill-color="green"/>
+        </g>
+    </svg>
+    For the element #b3, fill-color was set to green.
