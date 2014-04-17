@@ -262,7 +262,7 @@ class Id(Grammar):
     type = "id"
     def prefix_matches(prefix):
         return True
-    completions = ["#element_id"]
+    completions = ["#element_id", "#other_element_id"]
 
 class Select(Grammar):
     grammar = (CommandKeyword("select"), Id)

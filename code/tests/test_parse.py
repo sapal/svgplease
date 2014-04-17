@@ -390,5 +390,5 @@ class Complete(unittest.TestCase):
 
     def test_complete_select(self):
         self.assertCompletionEqual(["select"], {
-            "id": ["#element_id"]
+            "id": ["#element_id", "#other_element_id"]
             })
