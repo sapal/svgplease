@@ -388,3 +388,7 @@ class Complete(unittest.TestCase):
             "keyword": ["then"],
             })
 
+    def test_complete_select(self):
+        self.assertCompletionEqual(["select"], {
+            "id": ["#element_id"]
+            })

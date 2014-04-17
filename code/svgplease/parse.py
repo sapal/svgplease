@@ -254,10 +254,20 @@ class Move(Grammar):
             direction2: displacement2,
             })
 
-class Select(Grammar):
-    grammar = (CommandKeyword("select"), "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
+class Id(Grammar):
+    grammar = ("#", WORD("-_a-zA-Z0-9"), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
-        self.command = command.Select(self[2].string)
+        self.id = self[1].string
+    grammar_error_override = True
+    type = "id"
+    def prefix_matches(prefix):
+        return True
+    completions = ["#element_id"]
+
+class Select(Grammar):
+    grammar = (CommandKeyword("select"), Id)
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.Select(self[1].id)
 
 class Percent(Grammar):
     grammar = (NumberWithoutSeparator, "%", SEPARATOR)
