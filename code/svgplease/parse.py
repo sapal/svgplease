@@ -12,9 +12,12 @@ def join_tokens(tokens):
     else:
         return ""
 
-def KeywordBase(keyword, type):
+def KeywordBase(keyword, type, optional=False):
     """Base for all *Keyword functions below"""
-    grammar = LITERAL(keyword)
+    grammar = GRAMMAR(LITERAL(keyword), LITERAL(SEPARATOR))
+    if optional:
+        grammar = OPTIONAL(grammar)
+    grammar.grammar_error_override = True
     grammar.completions = [keyword]
     grammar.type = type
     def prefix_matches(prefix):
@@ -32,7 +35,7 @@ def Keyword(keyword):
 
 def OptionalKeyword(keyword):
     """Literal optional keyword"""
-    return KeywordBase(keyword, "optional_keyword")
+    return KeywordBase(keyword, "optional_keyword", optional=True)
 
 class Filename(Grammar):
     grammar = OR(
@@ -44,15 +47,15 @@ class Filename(Grammar):
         self.filename = elements[0].string if len(elements) == 2 else elements[2].string
 
 class Open(Grammar):
-    grammar = (CommandKeyword("open"), SEPARATOR, ONE_OR_MORE(Filename))
+    grammar = (CommandKeyword("open"), ONE_OR_MORE(Filename))
     def grammar_elem_init(self, sessiondata):
-        filenames = map(lambda g : g.filename, self[2])
+        filenames = map(lambda g : g.filename, self[1])
         self.command = command.Open(*filenames)
 
 class Save(Grammar):
-    grammar = (CommandKeyword("save"), SEPARATOR, OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
+    grammar = (CommandKeyword("save"), OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
     def grammar_elem_init(self, sessiondata):
-        filenames = map(lambda g : g.filename, self[3])
+        filenames = map(lambda g : g.filename, self[2])
         self.command = command.Save(*filenames)
 
 class NumberWithoutSeparator(Grammar):
@@ -99,14 +102,14 @@ class FillStroke(Grammar):
         self.fill_stroke = command.FillStroke(fill=fill, stroke=stroke)
 
 class ChangeColor(Grammar):
-    grammar = (CommandKeyword("change"), SEPARATOR, FillStroke, OPTIONAL(("color", SEPARATOR)),
+    grammar = (CommandKeyword("change"), FillStroke, OPTIONAL(("color", SEPARATOR)),
                OPTIONAL(OPTIONAL(("from", SEPARATOR)), Color),
                OPTIONAL(("to", SEPARATOR)), Color)
     def grammar_elem_init(self, sessiondata):
-        from_color = None if self[4] is None else self[4][1].color
-        self.command = command.ChangeColor(fill_stroke=self[2].fill_stroke,
+        from_color = None if self[3] is None else self[3][1].color
+        self.command = command.ChangeColor(fill_stroke=self[1].fill_stroke,
                                            from_color=from_color,
-                                           to_color=self[6].color)
+                                           to_color=self[5].color)
 
 class NonNegativeNumberWithoutSeparator(Grammar):
     grammar = (OPTIONAL("+"), WORD("0-9"), OPTIONAL((".", WORD("0-9"))))
@@ -167,13 +170,13 @@ def other_direction(direction):
         return "horizontally"
 
 class Move(Grammar):
-    grammar = (CommandKeyword("move"), SEPARATOR, OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
+    grammar = (CommandKeyword("move"), OPTIONAL("by", SEPARATOR), Displacement, OPTIONAL(Direction),
             OPTIONAL(OPTIONAL("and", SEPARATOR, "by", SEPARATOR), Displacement, OPTIONAL(Direction)))
     def grammar_elem_init(self, sessiondata):
-        displacement1 = self[3].displacement
-        displacement2 = self[5][1].displacement if self[5] else command.Displacement(0)
-        direction1 = self[4].direction if self[4] else None
-        direction2 = self[5][2].direction if self[5] and self[5][2] else None
+        displacement1 = self[2].displacement
+        displacement2 = self[4][1].displacement if self[4] else command.Displacement(0)
+        direction1 = self[3].direction if self[3] else None
+        direction2 = self[4][2].direction if self[4] and self[4][2] else None
 
         if direction1 == None and direction2 == None:
             direction1 = "horizontally"
@@ -189,9 +192,9 @@ class Move(Grammar):
             })
 
 class Select(Grammar):
-    grammar = (CommandKeyword("select"), SEPARATOR, "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
+    grammar = (CommandKeyword("select"), "#", WORD("-_a-zA-Z0-9"), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
-        self.command = command.Select(self[3].string)
+        self.command = command.Select(self[2].string)
 
 class Percent(Grammar):
     grammar = (NumberWithoutSeparator, "%", SEPARATOR)
@@ -200,20 +203,20 @@ class Percent(Grammar):
         self.number = self.percent / 100
 
 class Scale(Grammar):
-    grammar = (CommandKeyword("scale"), SEPARATOR, OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
+    grammar = (CommandKeyword("scale"), OPTIONAL("by", SEPARATOR), OR(Number, Percent), OR(
         OPTIONAL("both", SEPARATOR, OPTIONAL("directions", SEPARATOR)),
         (OPTIONAL(Direction), OPTIONAL(OPTIONAL("and", SEPARATOR, OPTIONAL("by", SEPARATOR)), OR(Number, Percent), OPTIONAL(Direction)))))
     def grammar_elem_init(self, sessiondata):
-        both = (self[4] is None or self[4].string[:4] in ("", "both"))
-        scale1 = self[3].number
+        both = (self[3] is None or self[3].string[:4] in ("", "both"))
+        scale1 = self[2].number
         if both:
             self.command = command.Scale(scale1, scale1)
         else:
             scale2 = 1
-            if self[4][1] and self[4][1][1]:
-                scale2 = self[4][1][1].number
-            direction1 = self[4][0].direction if self[4][0] else None
-            direction2 = self[4][1][2].direction if self[4][1] and self[4][1][2] else None
+            if self[3][1] and self[3][1][1]:
+                scale2 = self[3][1][1].number
+            direction1 = self[3][0].direction if self[3][0] else None
+            direction2 = self[3][1][2].direction if self[3][1] and self[3][1][2] else None
             if direction1 is None and direction2 is None:
                 direction1, direction2 = "horizontally", "vertically"
             elif direction1 == None:
@@ -226,12 +229,12 @@ class Scale(Grammar):
                 })
 
 class Remove(Grammar):
-    grammar = (CommandKeyword("remove"), SEPARATOR, OPTIONAL(OptionalKeyword("selected"), SEPARATOR))
+    grammar = (CommandKeyword("remove"), OptionalKeyword("selected"))
     def grammar_elem_init(self, sessiondata):
         self.command = command.Remove()
 
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, Move, Open, Remove, Save, Scale, Select), sep=(Keyword("then"), SEPARATOR))
+    grammar = LIST_OF(OR(ChangeColor, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 
