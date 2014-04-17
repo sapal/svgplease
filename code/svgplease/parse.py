@@ -18,13 +18,16 @@ def KeywordBase(keywords, type, optional=False):
     for keyword in keywords:
         grammar_list.append(LITERAL(keyword))
         grammar_list.append(LITERAL(SEPARATOR))
-    if not optional:
-        grammar = GRAMMAR(*grammar_list)
-    else:
-        grammar = OPTIONAL(GRAMMAR(*grammar_list[-2:]))
-        for i in range(len(grammar_list)-2, 0, -2):
-            grammar = OPTIONAL(GRAMMAR(*grammar_list[i-2:i]), grammar)
-    grammar.grammar_error_override = True
+    grammar = GRAMMAR(*grammar_list)
+    error_override = True
+    if optional:
+        if len(keywords) == 1:
+            grammar = OPTIONAL(grammar)
+        else:
+            error_override = False
+            grammar = OPTIONAL(KeywordBase([keywords[0]], type, False),
+                              KeywordBase(keywords[1:], type, True))
+    grammar.grammar_error_override = error_override
     grammar.completions = [keywords[0]]
     grammar.type = type
     def prefix_matches(prefix):

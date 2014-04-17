@@ -383,3 +383,8 @@ class Complete(unittest.TestCase):
             "keyword": ["then"],
             })
 
+        self.assertCompletionEqual(["scale", "by", "2", "both"], {
+            "optional_keyword": ["directions"],
+            "keyword": ["then"],
+            })
+
