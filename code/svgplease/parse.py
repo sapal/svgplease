@@ -84,7 +84,7 @@ class Open(Grammar):
         self.command = command.Open(*filenames)
 
 class Save(Grammar):
-    grammar = (CommandKeyword("save"), OPTIONAL(("to", SEPARATOR)), ONE_OR_MORE(Filename))
+    grammar = (CommandKeyword("save"), OptionalKeyword("to"), ONE_OR_MORE(Filename))
     def grammar_elem_init(self, sessiondata):
         filenames = map(lambda g : g.filename, self[2])
         self.command = command.Save(*filenames)
