@@ -172,13 +172,13 @@ class LengthUnit(Grammar):
 
 class Length(Grammar):
     grammar = (NonNegativeNumberWithoutSeparator, OPTIONAL(SEPARATOR),
-            OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
+            OPTIONAL(OptionalKeyword("of"), LengthUnit))
     def grammar_elem_init(self, sessiondata):
         self.length = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
 
 class Displacement(Grammar):
     grammar = (NumberWithoutSeparator, OPTIONAL(SEPARATOR),
-            OPTIONAL(OPTIONAL("of", SEPARATOR), LengthUnit))
+            OPTIONAL(OptionalKeyword("of"), LengthUnit))
     def grammar_elem_init(self, sessiondata):
         self.displacement = command.Length(self[0].number, "px" if self[2] is None else self[2][1].unit)
 
@@ -273,7 +273,6 @@ def complete(*tokens):
         suffix = text[e.char:].rstrip(SEPARATOR)
         completions = {}
         for grammar in e.expected:
-            print(str(grammar) if "type" not in dir(grammar) else grammar.type)
             if not "prefix_matches" in dir(grammar) or not grammar.prefix_matches(suffix):
                 continue
             if grammar.type not in completions:

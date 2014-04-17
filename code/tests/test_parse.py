@@ -341,7 +341,7 @@ class Complete(unittest.TestCase):
         self.assertCompletionEqual(["move", "10"], {
             "direction": ["hor", "horizontally", "ver", "vertically", "x", "y"],
             "unit": ["centimeter", "centimeters", "cm", "millimeter", "millimeters", "mm", "pixel", "pixels", "point", "points", "pt", "px"],
-            "optional_keyword": ["and", "by"],
+            "optional_keyword": ["and", "by", "of"],
             "number": ["-0.5", "10"],
             "keyword": ["then"],
             })
