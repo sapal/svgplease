@@ -1,9 +1,12 @@
 from . import command, parse
+import glob
 def run(program_name, arguments):
     """Parses the arguments and runs the commands"""
     if len(arguments) > 0 and arguments[0] == "--complete":
         completions = parse.complete(*arguments[2:])
         for key, value in sorted(completions.items()):
+            if key == "file":
+                value = glob.glob("*.svg")
             for item in value:
                 print(item)
     else:
