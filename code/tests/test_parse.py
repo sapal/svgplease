@@ -303,7 +303,6 @@ class Complete(unittest.TestCase):
 
     def assertCompletionContains(self, tokens, expected_completion):
         completion = svgplease.parse.complete(*tokens)
-        print(completion, expected_completion)
         self.assertTrue(all(item in completion.items() for item in expected_completion.items()))
 
     def test_complete_command(self):
