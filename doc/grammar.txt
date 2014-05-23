@@ -66,8 +66,8 @@ DIRECTION:
   (vertically|horizontally|ver|hor|x|y)
 
 MOVE_SPECIFICATION:
-  [by] DISPLACEMENT [and by] [DISPLACEMENT]  // horizontally, vertically
-  [by] DISPLACEMENT DIRECTION [and by] [DISPLACEMENT [DIRECTION]]
+  [by] DISPLACEMENT [[and by] DISPLACEMENT]  // horizontally, vertically
+  [by] DISPLACEMENT DIRECTION [[and by] DISPLACEMENT [DIRECTION]]
   to POSITION DIRECTION [and to] [POSITION [DIRECTION]]
   to POINT
 
