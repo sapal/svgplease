@@ -312,10 +312,11 @@ class Remove(Grammar):
         self.command = command.Remove()
 
 class ChangeLike(Grammar):
-    grammar = (CommandKeyword("change"), OptionalKeyword("like"), Keyword("from"), Filename,
+    grammar = (CommandKeyword("change"), OptionalKeyword("like"), Keyword("from"),
+            LIST_OF(Filename, sep=Keyword("via")),
             Keyword("to"), Filename)
     def grammar_elem_init(self, sessiondata):
-        self.command = command.ChangeLike(self[3].filename, self[5].filename)
+        self.command = command.ChangeLike(*([r.filename for r in list(self[3])[::2]] + [self[5].filename]))
 
 class CommandList(Grammar):
     grammar = LIST_OF(OR(ChangeColor, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))

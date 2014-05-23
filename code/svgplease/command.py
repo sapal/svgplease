@@ -270,10 +270,9 @@ class Remove(object):
 class ChangeLike(object):
     """Class representing "change like from one_file.svg to another_file.svg" command."""
 
-    def __init__(self, from_file, to_file):
-        self.from_file = from_file
-        self.to_file = to_file
+    def __init__(self, *change_list):
+        self.change_list = change_list
 
     def __eq__(self, other):
-        return (self.from_file, self.to_file) == (other.from_file, other.to_file)
+        return self.change_list == other.change_list
 
