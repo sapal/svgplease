@@ -296,7 +296,6 @@ class ChangeLike(object):
             self.ancestors = ancestors
 
         def addTo(self, root):
-            print("adding {} to {}".format(self.element, list(map(lambda x: x[0].get("id"), self.ancestors))))
             element = root
             for i, (ancestor, idx) in enumerate(self.ancestors):
                 if i == len(self.ancestors) - 1:
@@ -332,12 +331,15 @@ class ChangeLike(object):
         def execute(self, execution_context):
             context = execution_context.copy()
             context.select_roots()
-            Select(self.id_to_move).execute(context)
-            if not context.selected_nodes:
-                return
-            element = context.selected_nodes[0] #TODO: multiple files
-            ChangeLike.RemoveById(self.id_to_move).execute(context)
-            ChangeLike.AddTo(element, self.ancestors).execute(context)
+            for svg_root, root in zip(context.svg_roots, context.selected_nodes):
+                element = root.find(".//*[@id='{0}']".format(self.id_to_move))
+                if element is None:
+                    continue
+                execution_context = ExecutionContext()
+                execution_context.svg_roots = [svg_root]
+                execution_context.selected_nodes = [root]
+                ChangeLike.RemoveById(self.id_to_move).execute(execution_context)
+                ChangeLike.AddTo(element, self.ancestors).execute(execution_context)
 
     class SetAttribute(object):
         def __init__(self, element_id, attribute_name, attribute_value):
