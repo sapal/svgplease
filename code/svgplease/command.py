@@ -288,7 +288,8 @@ class ChangeLike(object):
             context = execution_context.copy()
             context.select_roots()
             Select(self.id_to_remove).execute(context)
-            Remove().execute(context) #TODO: remove from selection
+            Remove().execute(context)
+            execution_context.selected_nodes = [n for n in execution_context.selected_nodes if n.get("id") != self.id_to_remove]
 
     class AddTo(object):
         def __init__(self, element, ancestors):
