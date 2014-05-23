@@ -279,6 +279,20 @@ class Remove(object):
                 parent.remove(selection)
         execution_context.selected_nodes = []
 
+def explode_style(element):
+    """Changes style attribute to set of idividual attributes."""
+    style = element.get("style")
+    if style is not None:
+        for attr in style.split(";"):
+            name, value = map(str.strip, attr.split(":"))
+            element.set(name, value)
+        element.attrib.pop("style")
+
+def explode_style_recursively(element):
+    """Recuresively applies explode_style."""
+    explode_style(element)
+    for c in element:
+        explode_style_recursively(c)
 
 class ChangeLike(object):
     """Class representing "change like from one_file.svg to another_file.svg" command."""
@@ -394,12 +408,16 @@ class ChangeLike(object):
         return results
 
     def execute(self, execution_context):
+        for svg_root in execution_context.svg_roots:
+            explode_style_recursively(svg_root.root_element.getroot())
         commands = []
         for i in range(len(self.change_list) - 1):
             from_file = self.change_list[i]
             to_file = self.change_list[i + 1]
             from_root = ElementTree.parse(from_file).getroot()
             to_root = ElementTree.parse(to_file).getroot()
+            explode_style_recursively(from_root)
+            explode_style_recursively(to_root)
             from_elements = self.get_ids(from_root)
             to_elements = self.get_ids(to_root)
 
