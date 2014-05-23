@@ -7,6 +7,9 @@ import re
 """Global DPI (dots per inch) setting."""
 DPI = 120
 
+"""Global verbose setting."""
+VERBOSE = False
+
 ElementTree.register_namespace("", "http://www.w3.org/2000/svg")
 
 class CommandBase(object):
@@ -281,8 +284,10 @@ class ChangeLike(object):
     """Class representing "change like from one_file.svg to another_file.svg" command."""
 
     class RemoveById(object):
-        def __init__(self, id_to_remove):
+        def __init__(self, id_to_remove, toplevel=True):
             self.id_to_remove = id_to_remove
+            if VERBOSE and toplevel:
+                print("Remove <* #{}>".format(id_to_remove))
 
         def execute(self, execution_context):
             context = execution_context.copy()
@@ -292,9 +297,13 @@ class ChangeLike(object):
             execution_context.selected_nodes = [n for n in execution_context.selected_nodes if n.get("id") != self.id_to_remove]
 
     class AddTo(object):
-        def __init__(self, element, ancestors):
+        def __init__(self, element, ancestors, toplevel=True):
             self.element = element
             self.ancestors = ancestors
+            if VERBOSE and toplevel:
+                e = element
+                a = ancestors[0][0]
+                print("Add <{} #{}> to <{} #{}>".format(e.tag, e.get("id"), a.tag, a.get("id")))
 
         def addTo(self, root):
             element = root
@@ -325,9 +334,12 @@ class ChangeLike(object):
                 self.addTo(svg_root.root_element.getroot())
 
     class Move(object):
-        def __init__(self, id_to_move, ancestors):
+        def __init__(self, id_to_move, ancestors, toplevel=True):
             self.id_to_move = id_to_move
             self.ancestors = ancestors
+            if VERBOSE and toplevel:
+                a = ancestors[0][0]
+                print("Move <* #{}> to <{} #{}>".format(id_to_move, a.tag, a.get("id")))
 
         def execute(self, execution_context):
             context = execution_context.copy()
@@ -339,14 +351,16 @@ class ChangeLike(object):
                 execution_context = ExecutionContext()
                 execution_context.svg_roots = [svg_root]
                 execution_context.selected_nodes = [root]
-                ChangeLike.RemoveById(self.id_to_move).execute(execution_context)
-                ChangeLike.AddTo(element, self.ancestors).execute(execution_context)
+                ChangeLike.RemoveById(self.id_to_move, False).execute(execution_context)
+                ChangeLike.AddTo(element, self.ancestors, False).execute(execution_context)
 
     class SetAttribute(object):
-        def __init__(self, element_id, attribute_name, attribute_value):
+        def __init__(self, element_id, attribute_name, attribute_value, toplevel=True):
             self.element_id = element_id
             self.attribute_name = attribute_name
             self.attribute_value = attribute_value
+            if VERBOSE and toplevel:
+                print("Set attribute: <* #{} {}={}>".format(element_id, attribute_name, attribute_value))
 
         def execute(self, execution_context):
             context = execution_context.copy()
