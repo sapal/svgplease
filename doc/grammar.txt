@@ -17,7 +17,7 @@ COMMAND:
   change font size [to] (LENGTH|PERCENT)  // Change font size.
   change font style to ANY_TEXT  // Change font name.
   generate [DIMENSIONS] [COLOR] (circle|rectangle|star|text reading ANY_TEXT) [with id ANY_TEXT] [[on] LENGTH [[and] LENGTH]]  // Generates new object with given parameters and given location
-  change [like] from FILENAME [via FILENAME]* to FILENAME  // Changes the nodes accordingly to the change between the first file and the second one.
+  change like from FILENAME [via FILENAME]* to FILENAME  // Changes the nodes accordingly to the change between the first file and the second one.
   tile [(to fill|on)] [NUMBER [of]] PAGE_DIMENSIONS [page[s]]  // Tiles the images on a page. If "to fill" is specified, the images will be repeated to fill the page.
   replace with FILENAME  // Replaces selected objects with image loaded from FILENAME.
   render to FILENAME [[with] NUMBERdpi]  // Renders selected objects to file (filetype determined by extension).

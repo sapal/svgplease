@@ -290,8 +290,6 @@ class ParseChangeLike(TestParse):
     def test_change_single(self):
         self.assertEqual(self.parse(*("change like from some.svg to other.svg").split()).command,
                 command.ChangeLike("some.svg", "other.svg"))
-        self.assertEqual(self.parse(*("change from one.svg to two.svg").split()).command,
-                command.ChangeLike("one.svg", "two.svg"))
 
     def test_change_via(self):
         self.assertEqual(self.parse(*("change like from some.svg via one.svg "
@@ -329,6 +327,7 @@ class Complete(unittest.TestCase):
 
     def test_complete_change(self):
         self.assertCompletionEqual(["change"], {
+            "keyword" : ["like"],
             "fill_or_stroke": ["fill", "stroke"],
             "optional_keyword": ["color", "from", "to"],
             "color": ["#rrggbb", "#rrggbbaa"],
