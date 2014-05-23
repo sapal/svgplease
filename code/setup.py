@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="svgplease",
-    version="0.1",
+    version="0.2",
     url="https://github.com/sapal/svgplease",
     #TODO: download_url=
     license="GPLv3",
