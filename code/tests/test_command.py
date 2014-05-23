@@ -76,6 +76,16 @@ class TestExecutionContext(unittest.TestCase):
     def test_selected_nodes(self):
         self.assertEqual(ExecutionContext().selected_nodes, [])
 
+    def test_copy(self):
+        context = ExecutionContext()
+        context.svg_roots = ["foo", "bar"]
+        context.selected_nodes = ["lol"]
+        copy = context.copy()
+        copy.svg_roots = ["foobar"]
+        copy.selected_nodes = ["LOL"]
+        self.assertEqual(context.svg_roots, ["foo", "bar"])
+        self.assertEqual(context.selected_nodes, ["lol"])
+
 class TestSVGRoot(unittest.TestCase):
 
     def test_filename(self):
@@ -289,3 +299,7 @@ class TestChangeLike(unittest.TestCase):
         self.assertEqual(ChangeLike("from.svg", "to.svg"), ChangeLike("from.svg", "to.svg"))
         self.assertNotEqual(ChangeLike("a.svg", "b.svg"), ChangeLike("A.svg", "b.svg"))
         self.assertNotEqual(ChangeLike("a.svg", "b.svg"), ChangeLike("a.svg", "B.svg"))
+
+    def test_execute(self):
+        # Usecases are covered by change_like usecase test.
+        pass

@@ -15,4 +15,7 @@ class Scale(util.UsecaseTest):
 
 class Remove(util.UsecaseTest):
     directory = "remove"
+
+class ChangeLike(util.UsecaseTest):
+    directory = "change_like"
     failed_directory = "/tmp/failed"
