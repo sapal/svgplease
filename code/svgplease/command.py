@@ -294,7 +294,17 @@ class ChangeLike(object):
 
         def addTo(self, root):
             element = root
-            ancestor, idx = self.ancestors[0]
+            for i, (ancestor, idx) in enumerate(self.ancestors):
+                if i == len(self.ancestors) - 1:
+                    break
+                ancestor_id = ancestor.get("id")
+                if ancestor_id is None:
+                    continue
+                e = root.find(".//*[@id='{0}']".format(ancestor_id))
+                if e:
+                    element = e
+                    break
+
             previous_sibling_ids = [c.get("id") for c in ancestor[:idx] if c.get("id")]
             element_children_idx = {c.get("id"): i for i, c in enumerate(element) if c.get("id")}
 
@@ -304,7 +314,7 @@ class ChangeLike(object):
                 if child_idx is not None:
                     insert_idx = child_idx + 1
                     break
-            root.insert(insert_idx, self.element)
+            element.insert(insert_idx, self.element)
 
         def execute(self, execution_context):
             for svg_root in execution_context.svg_roots:
