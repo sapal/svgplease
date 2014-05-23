@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
+from svgplease.command import ChangeColor, ChangeLike, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -282,3 +282,10 @@ class TestRemove(unittest.TestCase):
             Remove().execute(execution_context)
             self.assertEqual(len(execution_context.selected_nodes), 0)
             self.assertEqual(len(root.findall(".//*[@id='blue']")), 0)
+
+class TestChangeLike(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(ChangeLike("from.svg", "to.svg"), ChangeLike("from.svg", "to.svg"))
+        self.assertNotEqual(ChangeLike("a.svg", "b.svg"), ChangeLike("A.svg", "b.svg"))
+        self.assertNotEqual(ChangeLike("a.svg", "b.svg"), ChangeLike("a.svg", "B.svg"))

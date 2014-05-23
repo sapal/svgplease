@@ -284,6 +284,15 @@ class ParseRemove(TestParse):
         self.assertEqual(self.parse("remove").command, command.Remove())
         self.assertEqual(self.parse("remove", "selected").command, command.Remove())
 
+class ParseChangeLike(TestParse):
+    tested_class_name = "ChangeLike"
+
+    def test_change_single(self):
+        self.assertEqual(self.parse(*("change like from some.svg to other.svg").split()).command,
+                command.ChangeLike("some.svg", "other.svg"))
+        self.assertEqual(self.parse(*("change from one.svg to two.svg").split()).command,
+                command.ChangeLike("one.svg", "two.svg"))
+
 class Complete(unittest.TestCase):
 
     def assertCompletionEqual(self, tokens, expected_completion):

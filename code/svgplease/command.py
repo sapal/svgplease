@@ -267,3 +267,13 @@ class Remove(object):
                 parent.remove(selection)
         execution_context.selected_nodes = []
 
+class ChangeLike(object):
+    """Class representing "change like from one_file.svg to another_file.svg" command."""
+
+    def __init__(self, from_file, to_file):
+        self.from_file = from_file
+        self.to_file = to_file
+
+    def __eq__(self, other):
+        return (self.from_file, self.to_file) == (other.from_file, other.to_file)
+
