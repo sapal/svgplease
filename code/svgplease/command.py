@@ -327,7 +327,7 @@ class ChangeLike(object):
         def dfs(elem):
             id = elem.get("id")
             if id in ids:
-                results[id] = list(stack)
+                results[id] = list(reversed(stack))
             for i, c in enumerate(elem):
                 stack.append((elem, i))
                 dfs(c)
