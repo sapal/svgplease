@@ -283,9 +283,32 @@ class ChangeLike(object):
 
         def execute(self, execution_context):
             context = execution_context.copy()
-            context.selected_nodes = [r.root_element for r in context.svg_roots]
+            context.selected_nodes = [r.root_element.getroot() for r in context.svg_roots]
             Select(self.id_to_remove).execute(context)
             Remove().execute(context)
+
+    class AddTo(object):
+        def __init__(self, element, ancestors):
+            self.element = element
+            self.ancestors = ancestors
+
+        def addTo(self, root):
+            element = root
+            ancestor, idx = self.ancestors[0]
+            previous_sibling_ids = [c.get("id") for c in ancestor[:idx] if c.get("id")]
+            element_children_idx = {c.get("id"): i for i, c in enumerate(element) if c.get("id")}
+
+            insert_idx = 0
+            for sibling_id in reversed(previous_sibling_ids):
+                child_idx = element_children_idx.get(sibling_id)
+                if child_idx is not None:
+                    insert_idx = child_idx + 1
+                    break
+            root.insert(insert_idx, self.element)
+
+        def execute(self, execution_context):
+            for svg_root in execution_context.svg_roots:
+                self.addTo(svg_root.root_element.getroot())
 
     def __init__(self, *change_list):
         self.change_list = change_list
@@ -295,17 +318,38 @@ class ChangeLike(object):
 
     def get_ids(self, filename):
         t = ElementTree.parse(filename)
-        return set(e.get("id") for e in t.findall(".//*[@id]") if e.tag != "svg")
+        return {e.get("id"): e for e in t.findall(".//*[@id]") if e.tag != "svg" and e.get("id")}
+
+    def find_ancestors(self, root, ids):
+        results = {}
+        stack = []
+
+        def dfs(elem):
+            id = elem.get("id")
+            if id in ids:
+                results[id] = list(stack)
+            for i, c in enumerate(elem):
+                stack.append((elem, i))
+                dfs(c)
+                stack.pop()
+        dfs(root)
+        return results
 
     def execute(self, execution_context):
         commands = []
         for i in range(len(self.change_list) - 1):
             from_file = self.change_list[i]
             to_file = self.change_list[i + 1]
-            from_ids = self.get_ids(from_file)
-            to_ids = self.get_ids(to_file)
-            for id in from_ids.difference(to_ids):
+            from_elements = self.get_ids(from_file)
+            to_elements = self.get_ids(to_file)
+
+            for id in set(from_elements.keys()).difference(to_elements.keys()):
                 commands.append(ChangeLike.RemoveById(id))
+
+            elements_to_add = set(set(to_elements.keys()).difference(from_elements.keys()))
+            ancestors = self.find_ancestors(ElementTree.parse(to_file).getroot(), elements_to_add)
+            for id in elements_to_add:
+                commands.append(ChangeLike.AddTo(to_elements[id], ancestors[id]))
 
         for command in commands:
             command.execute(execution_context)
