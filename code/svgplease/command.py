@@ -89,6 +89,9 @@ class ExecutionContext(object):
         context.selected_nodes = list(self.selected_nodes)
         return context
 
+    def select_roots(self):
+        self.selected_nodes = [r.root_element.getroot() for r in self.svg_roots]
+
 class SVGRoot(object):
     """Class representing the root node of SVG file."""
     def __init__(self, root_element, filename="image.svg"):
@@ -283,9 +286,9 @@ class ChangeLike(object):
 
         def execute(self, execution_context):
             context = execution_context.copy()
-            context.selected_nodes = [r.root_element.getroot() for r in context.svg_roots]
+            context.select_roots()
             Select(self.id_to_remove).execute(context)
-            Remove().execute(context)
+            Remove().execute(context) #TODO: remove from selection
 
     class AddTo(object):
         def __init__(self, element, ancestors):
@@ -327,15 +330,27 @@ class ChangeLike(object):
             self.ancestors = ancestors
 
         def execute(self, execution_context):
-            print("Moving {} to {}".format(self.id_to_move, self.ancestors[0][0].get("id")))
             context = execution_context.copy()
-            context.selected_nodes = [r.root_element.getroot() for r in context.svg_roots]
+            context.select_roots()
             Select(self.id_to_move).execute(context)
             if not context.selected_nodes:
                 return
-            element = context.selected_nodes[0]
+            element = context.selected_nodes[0] #TODO: multiple files
             ChangeLike.RemoveById(self.id_to_move).execute(context)
             ChangeLike.AddTo(element, self.ancestors).execute(context)
+
+    class SetAttribute(object):
+        def __init__(self, element_id, attribute_name, attribute_value):
+            self.element_id = element_id
+            self.attribute_name = attribute_name
+            self.attribute_value = attribute_value
+
+        def execute(self, execution_context):
+            context = execution_context.copy()
+            context.select_roots()
+            Select(self.element_id).execute(context)
+            for element in context.selected_nodes:
+                element.set(self.attribute_name, self.attribute_value)
 
     def __init__(self, *change_list):
         self.change_list = change_list
@@ -386,6 +401,12 @@ class ChangeLike(object):
                 (fa, _), (ta, _) = from_ancestors[id][0], to_ancestors[id][0]
                 if fa.get("id") != ta.get("id"):
                     commands.append(ChangeLike.Move(id, to_ancestors[id]))
+
+            elements_to_change = set(from_elements.keys()).intersection(to_elements.keys())
+            for id in elements_to_change:
+                for attr in to_elements[id].attrib:
+                    if to_elements[id].get(attr) != from_elements[id].get(attr):
+                        commands.append(ChangeLike.SetAttribute(id, attr, to_elements[id].get(attr)))
 
         for command in commands:
             command.execute(execution_context)
