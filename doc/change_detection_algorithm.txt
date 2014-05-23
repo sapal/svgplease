@@ -4,7 +4,7 @@ How does the change detection algorithm work:
 1. All nodes are identified by their id. If an element doesn't have an id, it is assumed that it has an unique id - different from all the other elements. The only exception is the topmost "svg" element - it is assumed that it corresponds to the topmost "svg" element in the TARGET file.
 2. Every element is either:
     a) left in place: it occurs both in BASE and TARGET and has the same parent in both
-    b) moved: it occurs both in BASE and TARGET, but has different parents
+    b) moved: it occurs both in BASE and TARGET, but has different parents (at least one of the parents should have an id)
     c) deleted: it occurs only in BASE
     d) added: it occurs only in TARGET
 3. Attribute changes are computed by finding, for every attribute separately, the highest possible element that either:

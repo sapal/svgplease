@@ -2,3 +2,4 @@ open input0.svg then change like from input0.1.svg to input0.2.svg then save to 
 open input1.svg then change like from input1.1.svg to input1.2.svg then save to output1.svg
 open input2.svg then change like from input2.1.svg to input2.2.svg then save to output2.svg
 open input3.svg then change like from input3.1.svg to input3.2.svg then save to output3.svg
+open input4.svg then change like from input4.1.svg to input4.2.svg then save to output4.svg
