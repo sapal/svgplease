@@ -1,0 +1,12 @@
+Source: svgplease
+Section: python
+Priority: optional
+Maintainer: Michał Sapalski <sapalskimichal@gmail.com>
+Package: svgplease
+Architecture: all
+Depends: python3 (>= 3.2)
+Description:command line tool for manipulating svg images.
+ The commands can be specified in simple language very similar to
+ standard English syntax.
+Installed-Size: 100
+Version: 0.2
