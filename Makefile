@@ -4,12 +4,11 @@ TESTDATA=$(shell find code -name '*.svg')
 DOC=$(shell find doc)
 DEB_DIR=deb/svgplease-${VERSION}
 
-all: dist/svgplease_${VERSION}_all.deb
+all: deb/svgplease_${VERSION}_all.deb
 
-dist/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC}
+deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC}
 	mkdir -p ${DEB_DIR}/source/code
 	cp --preserve debian -R ${DEB_DIR}
-	mkdir -p dist
 	echo 1.0 > ${DEB_DIR}/source/format
 	cp --preserve code/* -R ${DEB_DIR}/source/code
 	cp --preserve doc -R ${DEB_DIR}/source/
@@ -19,7 +18,12 @@ dist/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC}
 	rm -rf $$(find ${DEB_DIR} -name '__pycache__' -or -name 'dist')
 	rm -rf $$(find ${DEB_DIR} -name '*.swp' -or -name '*.pyc')
 	bash -c 'cd ${DEB_DIR}; debuild; cd ../..'
-	cp deb/svgplease_${VERSION}_all.deb dist
+	bash -c 'cd ${DEB_DIR}; debuild -S; cd ../..'
+
+upload: deb/svgplease_${VERSION}_all.deb
+	dput ppa:sapalskimichal/svgplease deb/svgplease_${VERSION}_source.changes
 
 clean:
-	rm dist deb -rf
+	rm deb -rf
+
+.PHONY: upload clean
