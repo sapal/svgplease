@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+# export DH_VERBOSE=1
+
+%:
+	dh $@ --with python3
+
+override_dh_auto_install:
+	mkdir -p debian/svgplease/usr/share/svgplease/
+	cp source/* debian/svgplease/usr/share/svgplease/ -R
+	rm debian/svgplease/usr/share/svgplease/format
+	mkdir -p debian/svgplease/usr/share/man/man1/
+	rst2man source/doc/man.rst > debian/svgplease/usr/share/man/man1/svgplease.1
+	gzip --best -f debian/svgplease/usr/share/man/man1/svgplease.1

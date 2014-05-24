@@ -16,7 +16,7 @@ License: BSD
   3. Neither the name of the University nor the names of its contributors
      may be used to endorse or promote products derived from this software
      without specific prior written permission.
-
+ .
   THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -31,4 +31,6 @@ License: BSD
 
 Files: *
 Copyright: 2014, Michał Sapalski, <sapalskimichal@gmail.com>
-License: /usr/share/common-licenses/GPL-3 
+License: GPL-3 
+  On Debian systems, you can find the full text of the GNU General Public
+  License v3 in `/usr/share/common-licenses/GPL-3'.
