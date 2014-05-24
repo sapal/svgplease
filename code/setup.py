@@ -14,15 +14,21 @@ setup(
         ("doc", ["../doc/grammar.txt", "../doc/change_detection_algorithm.txt"])
     ],
     description="Command line tool for manipulating svg files.",
-    #TODO: long_description=
+    long_description=("svgplease is a command line tool for manipulating svg images. " +
+                      "The commands can be specified in simple language very similar to standard " +
+                      "English syntax."),
     zip_safe=True,
     classifiers=[
-        #TODO: add classifiers.
+        "Topic :: Multimedia :: Graphics",
+        "Programming Language :: Python :: 3",
+        "Operating System :: OS Independent",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Environment :: Console",
+        "Development Status :: 2 - Pre-Alpha",
     ],
     platforms="any",
     packages=["svgplease", "modgrammar"],
     test_suite="tests.all_tests",
-    #TODO: investigate if this should be True if some .svg files should be included in the package:
     include_package_data=False,
     install_requires=[]
 )
