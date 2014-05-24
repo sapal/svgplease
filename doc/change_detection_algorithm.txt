@@ -8,8 +8,8 @@ How does the change detection algorithm work:
     c) deleted: it occurs only in BASE
     d) added: it occurs only in TARGET
 3. Attribute changes are computed by finding, for every attribute separately, the highest possible element that either:
-    a) for every element in it's subtree, the attribute value is set to Y
-    b) for every element in it's subtree, the attribute value is changed from X to Y
+    a) for every leaf element in it's subtree, the attribute value is set to Y
+    b) for every leaf element in it's subtree, the attribute value is changed from X to Y
     c) certain element's attribute value is set to Y
     Note that in (a) and (b) if an element doesn't have this attribute, it is left unchanged.
 4. Applying the changes to the OTHER file is done in the following way:

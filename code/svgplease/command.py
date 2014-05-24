@@ -11,6 +11,9 @@ DPI = 120
 """Global verbose setting."""
 VERBOSE = False
 
+"""Constant for specifying any node."""
+ANY = object()
+
 ElementTree.register_namespace("", "http://www.w3.org/2000/svg")
 ElementTree.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
 ElementTree.register_namespace("cc", "http://creativecommons.org/ns#")
@@ -375,20 +378,20 @@ class ChangeLike(object):
                 ChangeLike.AddTo(element, self.ancestors, False).execute(execution_context)
 
     class SetAttribute(object):
-        def __init__(self, element, attribute_name, attribute_value, recursively=False, only_if_exists=False, toplevel=True):
+        def __init__(self, element, attribute_name, attribute_value, replace=ANY, recursively=False, toplevel=True):
             self.element = element
             self.attribute_name = attribute_name
             self.attribute_value = attribute_value
+            self.replace = replace
             self.recursively = recursively
-            self.only_if_exists = only_if_exists
             if toplevel:
                 self.explain()
 
         def explain(self):
             if VERBOSE:
-                print("Set attribute (recursively? {}, only if exists? {}): <* #{} {}={}>".format(
-                    self.recursively, self.only_if_exists, self.element.get("id"),
-                    self.attribute_name, self.attribute_value))
+                print("Set attribute (recursively? {}, replace? {}): <* #{} {}={}>".format(
+                            self.recursively, self.replace, self.element.get("id"),
+                            self.attribute_name, self.attribute_value))
 
         def execute(self, execution_context):
             context = execution_context.copy()
@@ -406,8 +409,13 @@ class ChangeLike(object):
                     elements = collections.deque([element_to_change])
                     while elements:
                         element = elements.popleft()
-                        if element.get(self.attribute_name) is not None or not self.only_if_exists:
-                            element.set(self.attribute_name, self.attribute_value)
+                        value = element.get(self.attribute_name)
+                        if (not self.recursively or len(element) == 0) and self.replace in (ANY, value):
+                            if self.attribute_value is None:
+                                if self.attribute_name in element.attrib:
+                                    element.attrib.pop(self.attribute_name)
+                            else:
+                                element.set(self.attribute_name, self.attribute_value)
                         if self.recursively:
                             for child in element:
                                 elements.append(child)
@@ -436,45 +444,50 @@ class ChangeLike(object):
         dfs(root)
         return results
 
-    def generalizeSetAttribute(self, root, commands):
+    def generalizeSetAttribute(self, root, previous_elements, commands):
 
-        Fail, Any = object(), object()
-        def generalize(element, attr, command_dict):
+        def generalize(element, attr, command_dict): #TODO: remove attribute
             element_id = element.get("id")
-            commands = []
             value = element.get(attr)
-            if value is None:
-                value = Any
-                only_if_exists = True
-            else:
-                only_if_exists = False
-            command = None
-            if element_id is not None and element_id in command_dict:
-                command = command_dict[element_id]
-                commands.append(command)
-                only_if_exists = command.only_if_exists
+            previous_value = None if element_id is None or element_id not in previous_elements else previous_elements[element_id].get(attr)
 
+            replace = collections.defaultdict(set)
+            commands = []
+            is_leaf = True
             for child in element:
-                child_value, child_commands, child_only_if_exists = generalize(child, attr, command_dict)
+                is_leaf = False
+                child_commands, child_replace = generalize(child, attr, command_dict)
+                for p, v in child_replace.items():
+                    replace[p].update(v)
                 commands.extend(child_commands)
-                if value is not Any and child_value is not Any and child_value != value:
-                    value = Fail
-                else:
-                    value = child_value
-                if not child_only_if_exists:
-                    only_if_exists = False
+            if is_leaf:
+                replace[previous_value].add(value)
 
-            if value in (Any, Fail):
-                return value, commands, only_if_exists
-            elif commands and element_id is not None:
-                result = [ChangeLike.SetAttribute(
-                                    element, attr, value, recursively=True,
-                                    only_if_exists=only_if_exists, toplevel=False)]
-                if command is not None and command.only_if_exists != only_if_exists:
-                    result.append(command)
-                return (value, result, only_if_exists)
-            else:
-                return (value, commands, only_if_exists)
+            leaf_values = set()
+            for values in replace.values():
+                leaf_values.update(values)
+            update_values = set()
+            update_keys = set()
+            for command in commands:
+                update_values.add(command.attribute_value)
+                update_keys.add(command.replace)
+            for key in update_keys:
+                update_values.update(replace[key])
+            update_values.update(replace[ANY])
+            if len(leaf_values) == 1 or (len(update_values) == 1 and len(update_keys) == 1):
+                replace_value = ANY if len(update_keys) != 1 else list(update_keys)[0]
+                recursive = [c for c in commands if c.recursively]
+                commands = [c for c in commands if not c.recursively]
+                if recursive:
+                    set_value = list(update_values)[0]
+                    commands += [ChangeLike.SetAttribute(element, attr, set_value,
+                        replace=replace_value, recursively=True, toplevel=False)]
+            command = []
+            if element_id is not None and element_id in command_dict:
+                command = [command_dict[element_id]]
+                if is_leaf:
+                    command[0].recursively = True
+            return commands + command, replace
 
         def attribute_name(set_attribute):
             return set_attribute.attribute_name
@@ -482,7 +495,7 @@ class ChangeLike(object):
         result = []
 
         for attribute, cmds in itertools.groupby(sorted(commands, key=attribute_name), attribute_name):
-            change_commands = generalize(root, attribute, {c.element.get("id") : c for c in cmds})[1]
+            change_commands = generalize(root, attribute, {c.element.get("id") : c for c in cmds})[0]
             for command in change_commands:
                 command.explain()
                 result.append(command)
@@ -527,8 +540,8 @@ class ChangeLike(object):
                     if fv != tv:
                         change_commands.append(ChangeLike.SetAttribute(
                             to_elements[id], attr, to_elements[id].get(attr),
-                            only_if_exists=(fv is not None), toplevel=False))
-            commands.extend(self.generalizeSetAttribute(to_root, change_commands))
+                            replace=from_elements[id].get(attr), toplevel=False))
+            commands.extend(self.generalizeSetAttribute(to_root, from_elements, change_commands))
 
         for command in commands:
             command.execute(execution_context)
