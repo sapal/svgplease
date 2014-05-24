@@ -1,4 +1,5 @@
 from xml.etree import ElementTree
+import collections
 import itertools
 import math
 import os
@@ -369,19 +370,33 @@ class ChangeLike(object):
                 ChangeLike.AddTo(element, self.ancestors, False).execute(execution_context)
 
     class SetAttribute(object):
-        def __init__(self, element_id, attribute_name, attribute_value, toplevel=True):
+        def __init__(self, element_id, attribute_name, attribute_value, recursively=False, only_if_exists=False, toplevel=True):
             self.element_id = element_id
             self.attribute_name = attribute_name
             self.attribute_value = attribute_value
-            if VERBOSE and toplevel:
-                print("Set attribute: <* #{} {}={}>".format(element_id, attribute_name, attribute_value))
+            self.recursively = recursively
+            self.only_if_exists = only_if_exists
+            if toplevel:
+                self.explain()
+
+        def explain(self):
+            if VERBOSE:
+                print("Set attribute (recursively? {}, only if exists? {}): <* #{} {}={}>".format(
+                    self.recursively, self.only_if_exists, self.element_id,
+                    self.attribute_name, self.attribute_value))
 
         def execute(self, execution_context):
             context = execution_context.copy()
             context.select_roots()
-            Select(self.element_id).execute(context)
-            for element in context.selected_nodes:
-                element.set(self.attribute_name, self.attribute_value)
+            Select(self.element_id).execute(context) #TODO: Propagate
+            elements = collections.deque(context.selected_nodes)
+            while elements:
+                element = elements.popleft()
+                if element.get(self.attribute_name) is not None or not self.only_if_exists:
+                    element.set(self.attribute_name, self.attribute_value)
+                if self.recursively:
+                    for child in element:
+                        elements.append(child)
 
     def __init__(self, *change_list):
         self.change_list = change_list
@@ -406,6 +421,59 @@ class ChangeLike(object):
                 stack.pop()
         dfs(root)
         return results
+
+    def generalizeSetAttribute(self, root, commands):
+
+        Fail, Any = object(), object()
+        def generalize(v, attr, command_dict):
+            element_id = v.get("id")
+            commands = []
+            value = v.get(attr)
+            if value is None:
+                value = Any
+                only_if_exists = True
+            else:
+                only_if_exists = False
+            command = None
+            if element_id is not None and element_id in command_dict:
+                command = command_dict[element_id]
+                commands.append(command)
+                only_if_exists = command.only_if_exists
+
+            for child in v:
+                child_value, child_commands, child_only_if_exists = generalize(child, attr, command_dict)
+                commands.extend(child_commands)
+                if value is not Any and child_value is not Any and child_value != value:
+                    value = Fail
+                else:
+                    value = child_value
+                if not child_only_if_exists:
+                    only_if_exists = False
+
+            if value in (Any, Fail):
+                return value, commands, only_if_exists
+            elif commands and element_id is not None:
+                result = [ChangeLike.SetAttribute(
+                                    element_id, attr, value, recursively=True,
+                                    only_if_exists=only_if_exists, toplevel=False)]
+                if command is not None and command.only_if_exists != only_if_exists:
+                    result.append(command)
+                return (value, result, only_if_exists)
+            else:
+                return (value, commands, only_if_exists)
+
+        def attribute_name(set_attribute):
+            return set_attribute.attribute_name
+
+        result = []
+
+        for attribute, cmds in itertools.groupby(sorted(commands, key=attribute_name), attribute_name):
+            change_commands = generalize(root, attribute, {c.element_id : c for c in cmds})[1]
+            for command in change_commands:
+                command.explain()
+                result.append(command)
+
+        return result
 
     def execute(self, execution_context):
         for svg_root in execution_context.svg_roots:
@@ -438,10 +506,13 @@ class ChangeLike(object):
                     commands.append(ChangeLike.Move(id, to_ancestors[id]))
 
             elements_to_change = set(from_elements.keys()).intersection(to_elements.keys())
+            change_commands = []
             for id in elements_to_change:
                 for attr in to_elements[id].attrib:
-                    if to_elements[id].get(attr) != from_elements[id].get(attr):
-                        commands.append(ChangeLike.SetAttribute(id, attr, to_elements[id].get(attr)))
+                    fv, tv = from_elements[id].get(attr), to_elements[id].get(attr)
+                    if fv != tv:
+                        change_commands.append(ChangeLike.SetAttribute(id, attr, to_elements[id].get(attr), only_if_exists=(fv is not None), toplevel=False))
+            commands.extend(self.generalizeSetAttribute(to_root, change_commands))
 
         for command in commands:
             command.execute(execution_context)

@@ -7,3 +7,4 @@ open input5.svg then change like from input5.1.svg to input5.2.svg then save to 
 open input6.a.svg input6.b.svg then change like from input6.1.svg to input6.2.svg then save to output6.a.svg output6.b.svg
 open input7.svg then change like from input7.1.svg to input7.2.svg then save to output7.svg
 open input8.svg then change like from input8.1.svg to input8.2.svg then save to output8.svg
+open input9.svg then change like from input9.1.svg to input9.2.svg then save to output9.svg
