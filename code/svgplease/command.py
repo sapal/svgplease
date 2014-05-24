@@ -12,6 +12,11 @@ DPI = 120
 VERBOSE = False
 
 ElementTree.register_namespace("", "http://www.w3.org/2000/svg")
+ElementTree.register_namespace("dc", "http://purl.org/dc/elements/1.1/")
+ElementTree.register_namespace("cc", "http://creativecommons.org/ns#")
+ElementTree.register_namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+ElementTree.register_namespace("sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd")
+ElementTree.register_namespace("inkscape", "http://www.inkscape.org/namespaces/inkscape")
 
 class CommandBase(object):
     """Base class for all commands."""
