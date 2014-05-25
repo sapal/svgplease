@@ -1,12 +1,13 @@
-VERSION=0.2
+VERSION=$(shell head debian/changelog -n 1 | sed 's/.*(//' | sed 's/).*//')
 SOURCES=$(shell find code -name '*.py')
 TESTDATA=$(shell find code -name '*.svg')
 DOC=$(shell find doc)
+DEBIAN=$(shell find debian)
 DEB_DIR=deb/svgplease-${VERSION}
 
 all: deb/svgplease_${VERSION}_all.deb
 
-deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC}
+deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC} ${DEBIAN}
 	mkdir -p ${DEB_DIR}/source/code
 	cp --preserve debian -R ${DEB_DIR}
 	echo 1.0 > ${DEB_DIR}/source/format
