@@ -331,7 +331,7 @@ class ChangeText(Grammar):
         self.command = command.ChangeText(self[3].text)
 
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, ChangeLike, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))
+    grammar = LIST_OF(OR(ChangeColor, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

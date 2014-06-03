@@ -72,6 +72,11 @@ class ParseCommandList(TestParse):
     def test_change_color_command(self):
         self.assertEqual(self.parse("change", "color", "to", "#ffffff").command_list,
                 [command.ChangeColor(fill_stroke=command.FillStroke(), to_color=command.Color(255, 255, 255))])
+
+    def test_change_text_command(self):
+        self.assertEqual(self.parse("change", "text", "to", "lol").command_list,
+                [command.ChangeText("lol")])
+
     def test_two_commands(self):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
@@ -337,7 +342,7 @@ class Complete(unittest.TestCase):
 
     def test_complete_change(self):
         self.assertCompletionEqual(["change"], {
-            "keyword" : ["like"],
+            "keyword" : ["like", "text"],
             "fill_or_stroke": ["fill", "stroke"],
             "optional_keyword": ["color", "from", "to"],
             "color": ["#rrggbb", "#rrggbbaa"],
