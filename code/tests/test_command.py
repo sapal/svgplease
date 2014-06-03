@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, ChangeLike, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
+from svgplease.command import ChangeColor, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
 
 class TestOpen(unittest.TestCase):
 
@@ -303,3 +303,9 @@ class TestChangeLike(unittest.TestCase):
     def test_execute(self):
         # Usecases are covered by change_like usecase test.
         pass
+
+class TestChangeText(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(ChangeText("abc"), ChangeText("abc"))
+        self.assertNotEqual(ChangeText("ABC"), ChangeText("abc"))

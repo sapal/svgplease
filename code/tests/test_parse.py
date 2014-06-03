@@ -296,6 +296,17 @@ class ParseChangeLike(TestParse):
             + "via two.svg to other.svg").split()).command,
             command.ChangeLike("some.svg", "one.svg", "two.svg", "other.svg"))
 
+class ParseChangeText(TestParse):
+    tested_class_name = "ChangeText"
+
+    def test_change_whitespaces(self):
+        self.assertEqual(self.parse("change", "text", "to", "Foo Bar").command,
+                command.ChangeText("Foo Bar"))
+
+    def test_change_empty(self):
+        self.assertEqual(self.parse("change", "text", "to", "").command,
+                command.ChangeText(""))
+
 class Complete(unittest.TestCase):
 
     def assertCompletionEqual(self, tokens, expected_completion):

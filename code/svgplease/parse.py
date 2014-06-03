@@ -60,6 +60,13 @@ def MultipleOptionalKeyword(*keywords):
     """Optional keyword that matches any prefix of given keywords"""
     return KeywordBase(keywords, "optional_keyword", optional=True)
 
+class AnyText(Grammar):
+    grammar = (ZERO_OR_MORE(EXCEPT(ANY, SEPARATOR)), SEPARATOR)
+    def prefix_matches(prefix):
+        return True
+    def grammar_elem_init(self, sessiondata):
+        self.text = self.string[:-1]
+
 class NormalFilename(Grammar):
     grammar = (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
@@ -317,6 +324,11 @@ class ChangeLike(Grammar):
             Keyword("to"), Filename)
     def grammar_elem_init(self, sessiondata):
         self.command = command.ChangeLike(*([r.filename for r in list(self[3])[::2]] + [self[5].filename]))
+
+class ChangeText(Grammar):
+    grammar = (CommandKeyword("change"), Keyword("text"), Keyword("to"), AnyText)
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.ChangeText(self[3].text)
 
 class CommandList(Grammar):
     grammar = LIST_OF(OR(ChangeColor, ChangeLike, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))

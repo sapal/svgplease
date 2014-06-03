@@ -546,3 +546,16 @@ class ChangeLike(object):
         for command in commands:
             command.execute(execution_context)
 
+class ChangeText(object):
+    """Class representing "change text to 'foo bar'" command."""
+
+    def __init__(self, text):
+        self.text = text
+
+    def __eq__(self, other):
+        return self.text == other.text
+
+    def __str__(self):
+        return "ChangeText('" + self.text + "')"
+
+    __repr__ = __str__
