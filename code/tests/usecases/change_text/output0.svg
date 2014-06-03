@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" height="500" version="1.1" viewBox="0 0 500 500" width="500">
+  <g id="group">
+    <text x="20" y="30">bwahaha</text>
+    <text x="50" y="30">bwahaha</text>
+  </g>
+  <text x="20" y="50">bwahaha</text>
+</svg>

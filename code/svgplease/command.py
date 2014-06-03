@@ -559,3 +559,10 @@ class ChangeText(object):
         return "ChangeText('" + self.text + "')"
 
     __repr__ = __str__
+
+    def execute(self, execution_context):
+        for node in execution_context.selected_nodes:
+            for n in node.iter():
+                if n.tag.endswith("text") or n.tag.endswith("flowPara"):
+                    n.text = self.text
+

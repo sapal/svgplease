@@ -309,3 +309,7 @@ class TestChangeText(unittest.TestCase):
     def test_eq(self):
         self.assertEqual(ChangeText("abc"), ChangeText("abc"))
         self.assertNotEqual(ChangeText("ABC"), ChangeText("abc"))
+
+    def test_execute(self):
+        # Usecases are covered by change_like usecase test.
+        pass

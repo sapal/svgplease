@@ -18,4 +18,8 @@ class Remove(util.UsecaseTest):
 
 class ChangeLike(util.UsecaseTest):
     directory = "change_like"
+
+class ChangeText(util.UsecaseTest):
+    directory = "change_text"
     failed_directory = "/tmp/failed"
+
