@@ -77,6 +77,10 @@ class ParseCommandList(TestParse):
         self.assertEqual(self.parse("change", "text", "to", "lol").command_list,
                 [command.ChangeText("lol")])
 
+    def test_tile_command(self):
+        self.assertEqual(self.parse("tile", "on", "a4", "page").command_list,
+                [command.Tile(page=command.Page("a4"), fill=False)])
+
     def test_two_commands(self):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
@@ -312,6 +316,44 @@ class ParseChangeText(TestParse):
         self.assertEqual(self.parse("change", "text", "to", "").command,
                 command.ChangeText(""))
 
+class ParsePage(TestParse):
+    tested_class_name = "Page"
+
+    def test_a(self):
+        self.assertEqual(self.parse("a3").page, command.Page("a3"))
+        self.assertEqual(self.parse("a4").page, command.Page("a4"))
+        self.assertEqual(self.parse("a5").page, command.Page("a5"))
+
+    def test_dimensions(self):
+        self.assertEqual(
+                self.parse("20", "mm", "by", "10", "cm").page,
+                command.Page(command.Length(20, "mm"), command.Length(10, "cm")))
+        self.assertEqual(
+                self.parse("10", "cm", "20", "mm").page,
+                command.Page(command.Length(10, "cm"), command.Length(20, "mm")))
+
+class ParseTile(TestParse):
+    tested_class_name = "Tile"
+
+    def test_change_default(self):
+        self.assertEqual(self.parse("tile", "a4").command,
+                command.Tile(
+                    page=command.Page(command.Length(210, "mm"), command.Length(297, "mm")),
+                    fill=False))
+
+    def test_change_fill(self):
+        self.assertEqual(self.parse("tile", "to", "fill", "a4", "page").command,
+                command.Tile(
+                    page=command.Page("a4"),
+                    fill=True))
+
+    def test_change_on(self):
+        self.assertEqual(self.parse("tile", "on", "100px", "by", "100px", "pages").command,
+            command.Tile(
+                page=command.Page(command.Length(100, "px"), command.Length(100, "px")),
+                fill=False))
+
+
 class Complete(unittest.TestCase):
 
     def assertCompletionEqual(self, tokens, expected_completion):
@@ -323,7 +365,7 @@ class Complete(unittest.TestCase):
 
     def test_complete_command(self):
         self.assertCompletionEqual([], {
-            "command": ["change", "move", "open", "remove", "save", "scale", "select"]
+            "command": ["change", "move", "open", "remove", "save", "scale", "select", "tile"]
             })
 
         self.assertCompletionEqual(["s"], {
@@ -430,4 +472,10 @@ class Complete(unittest.TestCase):
     def test_complete_change_text(self):
         self.assertCompletionEqual(["change", "text", "to"], {
             "text": ["xkcd.com"]
+            })
+
+    def test_complete_tile(self):
+        self.assertCompletionEqual(["tile", "on", "a4"], {
+            "optional_keyword": ["page", "pages"],
+            "keyword": ["then"]
             })

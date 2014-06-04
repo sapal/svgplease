@@ -63,7 +63,7 @@ def MultipleOptionalKeyword(*keywords):
 class AnyText(Grammar):
     grammar = (ZERO_OR_MORE(EXCEPT(ANY, SEPARATOR)), SEPARATOR)
     def grammar_elem_init(self, sessiondata):
-        self.text = self.string[:-1]
+        self.text = self.string[:-len(SEPARATOR)]
     grammar_error_override = True
     type = "text"
     completions = ["xkcd.com"]
@@ -333,8 +333,21 @@ class ChangeText(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.command = command.ChangeText(self[3].text)
 
+class Page(Grammar):
+    grammar = OR(Keyword("a3"), Keyword("a4"), Keyword("a5"), (Length, OptionalKeyword("by"), Length))
+    def grammar_elem_init(self, sessiondata):
+        if len(list(self[0])) == 2:
+            self.page = command.Page(self[0][0].string)
+        else:
+            self.page = command.Page(self[0][0].length, self[0][2].length)
+
+class Tile(Grammar):
+    grammar = (CommandKeyword("tile"), OPTIONAL(OR(Keyword("on"), (Keyword("to"), Keyword("fill")))), Page, OR(OptionalKeyword("page"), OptionalKeyword("pages")))
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.Tile(page=self[2].page, fill=(self[1] is not None and self[1].string == "to" + SEPARATOR + "fill" + SEPARATOR))
+
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select), sep=Keyword("then"))
+    grammar = LIST_OF(OR(ChangeColor, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select, Tile), sep=Keyword("then"))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

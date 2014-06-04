@@ -208,6 +208,11 @@ class Length(object):
         """Returns pixel-equivalent of this length."""
         return Length._in_pixels[self.unit] * self.number
 
+    def __str__(self):
+        return str(self.number) + " " + self.unit
+    def __repr__(self):
+        return "Length(" + str(self.number) + ", '" + self.unit + "')"
+
 """Class representing displacement.
 
 The difference from Length is only semantical: Length cannot be negative.
@@ -566,3 +571,42 @@ class ChangeText(object):
                 if n.tag.endswith("text") or n.tag.endswith("flowPara"):
                     n.text = self.text
 
+class Page(object):
+    """Class representing page dimensions."""
+
+    """Supported predefined page sizes."""
+    PAGE_SIZE = {
+            "a3": (Length(297, "mm"), Length(420, "mm")),
+            "a4": (Length(210, "mm"), Length(297, "mm")),
+            "a5": (Length(148, "mm"), Length(210, "mm")),
+        }
+
+    def __init__(self, *args):
+        """
+        If single argument is given it is considered to be a predefined name (a3, a4, a5).
+        If two arguments are given they are supposed to be the dimensions (width, height).
+        """
+        if len(args) == 1:
+            wh = Page.PAGE_SIZE[args[0]]
+        if len(args) == 2:
+            wh = args
+        self.width, self.height = wh
+
+    def __eq__(self, other):
+        return (self.width, self.height) == (other.width, other.height)
+
+    def __str__(self):
+        return "Page(" + str(self.width) + ", " + str(self.height) + ")"
+
+    def __repr__(self):
+        return "Page(" + repr(self.width) + ", " + repr(self.height) + ")"
+
+class Tile(object):
+    """Class represnting "tile" command."""
+
+    def __init__(self, page, fill):
+        self.page = page
+        self.fill = fill
+
+    def __eq__(self, other):
+        return (self.page, self.fill) == (other.page, other.fill)

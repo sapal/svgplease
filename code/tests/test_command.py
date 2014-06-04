@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Remove, Save, Scale, Select, SVGRoot
+from svgplease.command import ChangeColor, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Page, Remove, Save, Scale, Select, SVGRoot, Tile
 
 class TestOpen(unittest.TestCase):
 
@@ -190,6 +190,12 @@ class TestLength(unittest.TestCase):
         self.assertEqual(Length(10, "cm").in_pixels(), 472.4409444)
         self.assertEqual(Length(10, "pt").in_pixels(), 12.5)
 
+    def test_str(self):
+        self.assertEqual(str(Length(11, "px")), "11 px")
+
+    def test_repr(self):
+        self.assertEqual(repr(Length(15, "mm")), "Length(15, 'mm')")
+
 class TestDisplacement(unittest.TestCase):
 
     def test_eq(self):
@@ -313,3 +319,49 @@ class TestChangeText(unittest.TestCase):
     def test_execute(self):
         # Usecases are covered by change_like usecase test.
         pass
+
+    def test_str(self):
+        self.assertEqual(str(ChangeText("abc")), "ChangeText('abc')")
+
+    def test_repr(self):
+        self.assertEqual(repr(ChangeText("abc")), "ChangeText('abc')")
+
+class TestPage(unittest.TestCase):
+
+    def test_dimensions(self):
+        w = Length(15, "mm")
+        h = Length(3, "cm")
+        self.assertEqual(Page(w, h).width, w)
+        self.assertEqual(Page(w, h).height, h)
+
+    def test_eq(self):
+        w = Length(10, "cm")
+        h = Length(500, "px")
+        self.assertEqual(Page(w, h), Page(w, h))
+        self.assertNotEqual(Page(w, h), Page(h, w))
+
+    def test_a(self):
+        self.assertEqual(Page("a3"), Page(Length(297, "mm"), Length(420, "mm")))
+        self.assertEqual(Page("a4"), Page(Length(210, "mm"), Length(297, "mm")))
+        self.assertEqual(Page("a5"), Page(Length(148, "mm"), Length(210, "mm")))
+
+    def test_str(self):
+        self.assertEqual(str(Page(Length(30, "mm"), Length(40, "mm"))), "Page(30 mm, 40 mm)")
+
+    def test_repr(self):
+        self.assertEqual(repr(Page(Length(30, "mm"), Length(40, "mm"))), "Page(Length(30, 'mm'), Length(40, 'mm'))")
+
+class TestTile(unittest.TestCase):
+
+    def test_fields(self):
+        p = object()
+        self.assertEqual(Tile(p, True).page, p)
+        self.assertEqual(Tile(p, True).fill, True)
+        self.assertEqual(Tile(p, False).fill, False)
+
+    def test_eq(self):
+        p, q = object(), object()
+        self.assertEqual(Tile(p, True), Tile(p, True))
+        self.assertNotEqual(Tile(p, True), Tile(q, True))
+        self.assertNotEqual(Tile(p, True), Tile(p, False))
+
