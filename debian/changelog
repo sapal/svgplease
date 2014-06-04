@@ -1,3 +1,9 @@
+svgplease (0.2.2) trusty; urgency=medium
+  * Added 'change text to' command.
+  * Added support for bash completion.
+
+ -- Michał Sapalski <sapalskimichal@gmail.com>  Wed, 4 Jun 2014 12:40:39 +0200
+
 svgplease (0.2.1) trusty; urgency=medium
   * Fixed build problems.
 

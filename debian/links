@@ -1,2 +1,3 @@
 usr/share/svgplease/svgplease usr/bin/svgplease
 usr/share/svgplease/svgplease.fish usr/share/fish/completions/svgplease.fish
+usr/share/svgplease/svgplease.bash etc/bash_completion.d/svgplease

@@ -62,10 +62,13 @@ def MultipleOptionalKeyword(*keywords):
 
 class AnyText(Grammar):
     grammar = (ZERO_OR_MORE(EXCEPT(ANY, SEPARATOR)), SEPARATOR)
-    def prefix_matches(prefix):
-        return True
     def grammar_elem_init(self, sessiondata):
         self.text = self.string[:-1]
+    grammar_error_override = True
+    type = "text"
+    completions = ["xkcd.com"]
+    def prefix_matches(prefix):
+        return True
 
 class NormalFilename(Grammar):
     grammar = (EXCEPT(ANY_EXCEPT(SEPARATOR), OR("then", "file", "to")), SEPARATOR)
@@ -339,6 +342,7 @@ def complete(*tokens):
     text = join_tokens(tokens) + SEPARATOR
     try:
         CommandList.parser().parse_text(text, eof=True, matchtype="complete")
+        return {AnyText.type: AnyText.completions}
     except ParseError as e:
         suffix = text[e.char:].rstrip(SEPARATOR)
         completions = {}

@@ -420,3 +420,14 @@ class Complete(unittest.TestCase):
         self.assertCompletionEqual(["select"], {
             "id": ["#element_id", "#other_element_id"]
             })
+
+    def test_complete_change_like(self):
+        self.assertCompletionEqual(["change", "like", "from"], {
+            "file": ["file.svg"],
+            "keyword": ["file"]
+            })
+
+    def test_complete_change_text(self):
+        self.assertCompletionEqual(["change", "text", "to"], {
+            "text": ["xkcd.com"]
+            })

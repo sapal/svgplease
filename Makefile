@@ -16,6 +16,7 @@ deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC} ${DEBIAN}
 	cp --preserve svgplease ${DEB_DIR}/source
 	cp --preserve svgplease ${DEB_DIR}/source
 	cp --preserve svgplease.fish ${DEB_DIR}/source
+	cp --preserve svgplease.bash ${DEB_DIR}/source
 	rm -rf $$(find ${DEB_DIR} -name '__pycache__' -or -name 'dist')
 	rm -rf $$(find ${DEB_DIR} -name '*.swp' -or -name '*.pyc')
 	bash -c 'cd ${DEB_DIR}; debuild; cd ../..'
