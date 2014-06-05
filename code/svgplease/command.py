@@ -21,6 +21,27 @@ ElementTree.register_namespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-n
 ElementTree.register_namespace("sodipodi", "http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd")
 ElementTree.register_namespace("inkscape", "http://www.inkscape.org/namespaces/inkscape")
 
+def explode_style(element):
+    """Changes style attribute to set of idividual attributes."""
+    style = element.get("style")
+    if style is not None:
+        nonstandard = []
+        for attr in style.split(";"):
+            name, value = map(str.strip, attr.split(":"))
+            if name.startswith("-"):
+                nonstandard.append((name, value))
+            else:
+                element.set(name, value)
+        element.attrib.pop("style")
+        if nonstandard:
+            element.set("style", ";".join("{}:{}".format(name, value) for name, value in nonstandard))
+
+def explode_style_recursively(element):
+    """Recuresively applies explode_style."""
+    explode_style(element)
+    for c in element:
+        explode_style_recursively(c)
+
 class CommandBase(object):
     """Base class for all commands."""
 
@@ -49,7 +70,9 @@ class Open(OpenSaveBase):
         for filename in self.filenames:
             t = ElementTree.parse(filename)
             execution_context.svg_roots.append(SVGRoot(t, filename))
-            execution_context.selected_nodes.append(t.getroot())
+            root = t.getroot()
+            explode_style_recursively(root)
+            execution_context.selected_nodes.append(root)
 
 class Save(OpenSaveBase):
     """Command for saving files"""
@@ -292,21 +315,6 @@ class Remove(object):
                     prev.tail = selection.tail
                 parent.remove(selection)
         execution_context.selected_nodes = []
-
-def explode_style(element):
-    """Changes style attribute to set of idividual attributes."""
-    style = element.get("style")
-    if style is not None:
-        for attr in style.split(";"):
-            name, value = map(str.strip, attr.split(":"))
-            element.set(name, value)
-        element.attrib.pop("style")
-
-def explode_style_recursively(element):
-    """Recuresively applies explode_style."""
-    explode_style(element)
-    for c in element:
-        explode_style_recursively(c)
 
 class ChangeLike(object):
     """Class representing "change like from one_file.svg to another_file.svg" command."""

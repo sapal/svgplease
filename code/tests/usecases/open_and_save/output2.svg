@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" height="500" id="starter_svg" version="1.1" viewBox="0 0 500 500" width="500">
+  <circle cr="100" cx="100" cy="100" fill-color="red" stroke-color="black" style="-some-non-standard-attribute:false" />
+</svg>
