@@ -1,7 +1,10 @@
 from xml.etree import ElementTree
 import collections
+import copy
+import io
 import itertools
 import math
+import modgrammar
 import os
 import re
 
@@ -230,6 +233,8 @@ class Length(object):
     def in_pixels(self):
         """Returns pixel-equivalent of this length."""
         return Length._in_pixels[self.unit] * self.number
+    def short_string(self):
+        return str(self.number) + (self.unit if self.unit != "px" else "")
 
     def __str__(self):
         return str(self.number) + " " + self.unit
@@ -612,9 +617,57 @@ class Page(object):
 class Tile(object):
     """Class represnting "tile" command."""
 
+    SVG_TEMPLATE = (
+"""<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" height="{height}" version="1.1" viewBox="0 0 {widthp} {heightp}" width="{width}">
+</svg>
+""")
+
     def __init__(self, page, fill):
         self.page = page
         self.fill = fill
 
     def __eq__(self, other):
         return (self.page, self.fill) == (other.page, other.fill)
+
+    def execute(self, execution_context):
+        from . import parse
+        def get_dimensions(root):
+            w, h = 100, 100
+            sw, sh = root.get("width"), root.get("height")
+            if sw is not None:
+                try:
+                    w = parse.Length.parser().parse_text(sw, eof=True, matchtype="complete").length
+                except modgrammar.ParseError as e:
+                    pass
+            if sh is not None:
+                try:
+                    h = parse.Length.parser().parse_text(sh, eof=True, matchtype="complete").length
+                except modgrammar.ParseError as e:
+                    pass
+            return w, h
+
+        execution_context.select_roots()
+        inner_roots = execution_context.selected_nodes
+        execution_context.svg_roots = []
+        execution_context.selected_nodes = []
+
+        t = ElementTree.parse(io.StringIO(Tile.SVG_TEMPLATE.format(
+            height=self.page.height.short_string(),
+            width=self.page.width.short_string(),
+            heightp=self.page.height.in_pixels(),
+            widthp=self.page.width.in_pixels())))
+        execution_context.svg_roots.append(SVGRoot(t, "tiled.svg"))
+        execution_context.select_roots()
+
+        root, = execution_context.selected_nodes
+
+        x = 0
+        y = 0
+        for inner_root in inner_roots:
+            w, h = get_dimensions(inner_root)
+            g = ElementTree.SubElement(root, "g")
+            g.set("transform", "translate({},{})".format(x, y))
+            g.append(copy.deepcopy(inner_root))
+            x += w.in_pixels()
+

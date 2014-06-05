@@ -1,0 +1,2 @@
+open input0.0.svg input0.1.svg input0.0.svg input0.1.svg then tile on 2000 by 500 page then save to output0.svg
+open input1.0.svg input1.1.svg input1.0.svg input1.1.svg then tile on 2000mm by 500mm page then save to output1.svg
