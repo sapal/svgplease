@@ -652,20 +652,31 @@ class Tile(object):
         execution_context.svg_roots = []
         execution_context.selected_nodes = []
 
-        t = ElementTree.parse(io.StringIO(Tile.SVG_TEMPLATE.format(
-            height=self.page.height.short_string(),
-            width=self.page.width.short_string(),
-            heightp=self.page.height.in_pixels(),
-            widthp=self.page.width.in_pixels())))
-        execution_context.svg_roots.append(SVGRoot(t, "tiled.svg"))
-        execution_context.select_roots()
-
-        root, = execution_context.selected_nodes
-
+        i = 0
         x = 0
-        y = 0
+        y = self.page.height.in_pixels()
+        maxh = 0
         for inner_root in inner_roots:
             w, h = get_dimensions(inner_root)
+            maxh = max(maxh, h.in_pixels())
+            if x != 0 and x + w.in_pixels() > self.page.width.in_pixels():
+                x = 0
+                y += maxh
+                maxh = h.in_pixels()
+            if y + h.in_pixels() > self.page.height.in_pixels():
+                x = 0
+                y = 0
+                maxh = h.in_pixels()
+                t = ElementTree.parse(io.StringIO(Tile.SVG_TEMPLATE.format(
+                    height=self.page.height.short_string(),
+                    width=self.page.width.short_string(),
+                    heightp=self.page.height.in_pixels(),
+                    widthp=self.page.width.in_pixels())))
+                execution_context.svg_roots.append(SVGRoot(t, "tiled{}.svg".format(i)))
+                execution_context.select_roots()
+                root = execution_context.selected_nodes[-1]
+                i += 1
+
             g = ElementTree.SubElement(root, "g")
             g.set("transform", "translate({},{})".format(x, y))
             g.append(copy.deepcopy(inner_root))
