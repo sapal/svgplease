@@ -187,6 +187,12 @@ class NonNegativeNumberWithoutSeparator(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.number = float(self.string)
 
+    grammar_error_override = True
+    type = "non_negative_number"
+    def prefix_matches(prefix):
+        return True
+    completions = ["0.5", "10"]
+
 class NonNegativeNumber(Grammar):
     grammar = (NonNegativeNumberWithoutSeparator, SEPARATOR)
     def grammar_elem_init(self, sessiondata):
@@ -333,8 +339,11 @@ class ChangeText(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.command = command.ChangeText(self[3].text)
 
+class PageDimensions(Grammar):
+    grammar = (Length, OptionalKeyword("by"), Length)
+
 class Page(Grammar):
-    grammar = OR(Keyword("a3"), Keyword("a4"), Keyword("a5"), (Length, OptionalKeyword("by"), Length))
+    grammar = OR(Keyword("a3"), Keyword("a4"), Keyword("a5"), PageDimensions)
     def grammar_elem_init(self, sessiondata):
         if len(list(self[0])) == 2:
             self.page = command.Page(self[0][0].string)

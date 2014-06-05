@@ -479,3 +479,7 @@ class Complete(unittest.TestCase):
             "optional_keyword": ["page", "pages"],
             "keyword": ["then"]
             })
+        self.assertCompletionEqual(["tile", "on"], {
+            "keyword": ["a3", "a4", "a5"],
+            "non_negative_number": ["0.5", "10"],
+            })
