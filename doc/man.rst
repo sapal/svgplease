@@ -131,6 +131,32 @@ COMMANDS
 
     Opens file 'base.svg', then applies all the changes between 'file1.svg' and 'file2.svg', then applies the changes between 'file2.svg' and 'file3.svg', changes between 'file3.svg' and 'file4.svg' and saves the result to 'result.svg'
 
+**change text** to SOME_TEXT
+
+  Changes the text in all selected nodes (and their descendants) to the given text.
+
+  Examples:
+
+    svgplease open foo.svg then select '#foo' then **change text** to 'LOL' then save to bar.svg
+
+    Change the text in node '#foo" from file 'foo.svg' to 'LOL' and save the result to 'bar.svg'.
+
+**tile** [on] PAGE_SPECIFICATION [page[s]]
+**tile** [to fill] PAGE_SPECIFICATION [page[s]]
+    
+  Puts opened files onto a page (or multiple pages) of given size. If 'to fill' option is specified, opened files are repeated untill exactly one page is filled.
+  PAGE_SPECIFICATION can be:
+    * a constant like: a3, a4, a5
+    * width and height: '10cm by 15cm' or '500 300'
+
+  Examples:
+
+    svgplease open foo1.svg foo2.svg foo3.svg then **tile** on a4 page then save to bar.svg
+
+    svgplease open foo1.svg foo2.svg foo3.svg then **tile** on 210mm by 297mm page then save to bar.svg
+
+    These two commands do the same: open files 'foo1.svg' 'foo2.svg' 'foo3.svg' and tries to put them on one A4 page (if that's impossible, they will be put onto two or three pages). The output is saved to 'bar.svg'.
+
 OPTIONS
 =======
 

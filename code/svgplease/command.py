@@ -649,6 +649,8 @@ class Tile(object):
 
         execution_context.select_roots()
         inner_roots = execution_context.selected_nodes
+        if self.fill:
+            inner_roots = itertools.cycle(inner_roots)
         execution_context.svg_roots = []
         execution_context.selected_nodes = []
 
@@ -664,6 +666,8 @@ class Tile(object):
                 y += maxh
                 maxh = h.in_pixels()
             if y + h.in_pixels() > self.page.height.in_pixels():
+                if self.fill and i > 0:
+                    break
                 x = 0
                 y = 0
                 maxh = h.in_pixels()

@@ -4,3 +4,4 @@ open input2.0.svg input2.1.svg input2.0.svg input2.1.svg then tile on 1000 by 16
 open input3.svg then tile on 200 by 200 page then save to output3.svg
 open input4.0.svg input4.1.svg input4.0.svg input4.1.svg then tile on 500 by 1000 page then save to output4.0.svg output4.1.svg
 open input5.svg input5.svg then tile on 500 by 200 page then save to output5.0.svg output5.1.svg
+open input6.svg then tile to fill 500 by 500 page then save to output6.svg

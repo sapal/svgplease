@@ -1,3 +1,8 @@
+svgplease (0.3) trusty; urgency=medium
+  * Added 'tile' command.
+
+ -- Michał Sapalski <sapalskimichal@gmail.com>  Thu, 5 Jun 2014 17:11:01 +0200
+
 svgplease (0.2.3) trusty; urgency=medium
   * Fixed fish completion.
   * Fixed completion for quoted arguments.
