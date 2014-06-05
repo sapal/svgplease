@@ -581,8 +581,9 @@ class ChangeText(object):
     def execute(self, execution_context):
         for node in execution_context.selected_nodes:
             for n in node.iter():
-                if n.tag.endswith("text") or n.tag.endswith("flowPara"):
-                    n.text = self.text
+                if n.tag.endswith("text") or n.tag.endswith("flowPara") or n.tag.endswith("tspan"):
+                    if len(n) == 0 or n.text is not None:
+                        n.text = self.text
 
 class Page(object):
     """Class representing page dimensions."""

@@ -21,8 +21,8 @@ class ChangeLike(util.UsecaseTest):
 
 class ChangeText(util.UsecaseTest):
     directory = "change_text"
+    failed_directory = "/tmp/failed"
 
 class Tile(util.UsecaseTest):
     directory = "tile"
-    failed_directory = "/tmp/failed"
 
