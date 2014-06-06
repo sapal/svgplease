@@ -27,5 +27,8 @@ class Tile(util.UsecaseTest):
 
 class ChangeFontFamily(util.UsecaseTest):
     directory = "change_font_family"
+
+class ChangeFontSize(util.UsecaseTest):
+    directory = "change_font_size"
     failed_directory = "/tmp/failed"
 

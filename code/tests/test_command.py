@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, ChangeFontFamily, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Page, Remove, Save, Scale, Select, SVGRoot, Tile
+from svgplease.command import ChangeColor, ChangeFontFamily, ChangeFontSize, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Page, Remove, Save, Scale, Select, SVGRoot, Tile
 
 class TestOpen(unittest.TestCase):
 
@@ -365,6 +365,10 @@ class TestTile(unittest.TestCase):
         self.assertNotEqual(Tile(p, True), Tile(q, True))
         self.assertNotEqual(Tile(p, True), Tile(p, False))
 
+    def test_execute(self):
+        # Usecases are covered by tile usecase test.
+        pass
+
 class TestChangeFontFamily(unittest.TestCase):
 
     def test_fields(self):
@@ -373,3 +377,17 @@ class TestChangeFontFamily(unittest.TestCase):
     def test_eq(self):
         self.assertEqual(ChangeFontFamily("Times New Roman"), ChangeFontFamily("Times New Roman"))
         self.assertNotEqual(ChangeFontFamily("Verdana"), ChangeFontFamily("Helvetica"))
+
+    def test_execute(self):
+        # Usecases are covered by change_font_family usecase test.
+        pass
+
+class TestChangeFontSize(unittest.TestCase):
+
+    def test_eq(self):
+        self.assertEqual(ChangeFontSize(Length(15, "mm")), ChangeFontSize(Length(15, "mm")))
+        self.assertNotEqual(ChangeFontSize(Length(10, "mm")), ChangeFontSize(Length(10, "px")))
+
+    def test_execute(self):
+        # Usecases are covered by change_font_size usecase test.
+        pass

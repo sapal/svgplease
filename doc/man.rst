@@ -122,9 +122,19 @@ COMMANDS
 
   Examples:
     
-    svgplease open foo.svg then change font family to 'Times New Roman' then save to bar.svg
+    svgplease open foo.svg then **change** font family to 'Times New Roman' then save to bar.svg
 
     This command sets the font for all the text in 'foo.svg' to 'Times New Roman'. The result is saved to 'bar.svg'.
+
+**change** font size [to] SIZE
+
+  Changes font size of all selected text nodes and their descendands to given.
+  
+  Examples:
+    
+    svgplease open foo.svg then **change** font size to 15px then save to bar.svg
+
+    This command will set font size for all the text in 'foo.svg' to 15 pixels and save the result to 'bar.svg'.
 
 **change like** [from] FILENAME [via FILENAME...] [to] FILENAME
 

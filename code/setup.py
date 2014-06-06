@@ -5,7 +5,7 @@ setup(
     name="svgplease",
     version="0.2",
     url="https://github.com/sapal/svgplease",
-    #TODO: download_url=
+    download_url="https://launchpad.net/~sapalskimichal/+archive/svgplease",
     license="GPLv3",
     author="Michał Sapalski",
     author_email="sapalskimichal@gmail.com",

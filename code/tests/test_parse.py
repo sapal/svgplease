@@ -85,6 +85,10 @@ class ParseCommandList(TestParse):
         self.assertEqual(self.parse("change", "font", "family", "to", "Helvetica").command_list,
                 [command.ChangeFontFamily("Helvetica")])
 
+    def test_change_font_size_command(self):
+        self.assertEqual(self.parse("change", "font", "size", "to", "15px").command_list,
+                [command.ChangeFontSize(command.Length(15, "px"))])
+
     def test_two_commands(self):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
@@ -371,6 +375,15 @@ class ParseChangeFontFamily(TestParse):
                 command.ChangeFontFamily("Verdana"))
         self.assertEqual(self.parse("change", "font", "to", "Helvetica").command,
                 command.ChangeFontFamily("Helvetica"))
+
+class ParseChangeFontSize(TestParse):
+    tested_class_name = "ChangeFontSize"
+
+    def test_change_font_size(self):
+        self.assertEqual(self.parse("change", "font", "size", "to", "15mm").command,
+                command.ChangeFontSize(command.Length(15, "mm")))
+        self.assertEqual(self.parse("change", "font", "size", "10").command,
+                command.ChangeFontSize(command.Length(10, "px")))
 
 class Complete(unittest.TestCase):
 

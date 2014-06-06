@@ -370,8 +370,15 @@ class ChangeFontFamily(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.command = command.ChangeFontFamily(self[4].font)
 
+class ChangeFontSize(Grammar):
+    grammar = (CommandKeyword("change"), Keyword("font"), Keyword("size"), OptionalKeyword("to"), Length)
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.ChangeFontSize(self[4].length)
+
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, ChangeFontFamily, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select, Tile), sep=Keyword("then"))
+    grammar = LIST_OF(OR(
+        ChangeColor, ChangeFontFamily, ChangeFontSize, ChangeLike, ChangeText,
+        Move, Open, Remove, Save, Scale, Select, Tile), sep=Keyword("then"))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

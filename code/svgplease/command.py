@@ -705,3 +705,17 @@ class ChangeFontFamily(object):
                 if is_text_node(n):
                     n.set("font-family", self.font)
 
+class ChangeFontSize(object):
+    """Class representing 'change font size' command."""
+
+    def __init__(self, size):
+        self.size = size
+
+    def __eq__(self, other):
+        return self.size == other.size
+
+    def execute(self, execution_context):
+        for node in execution_context.selected_nodes:
+            for n in node.iter():
+                if is_text_node(n):
+                    n.set("font-size", self.size.short_string())
