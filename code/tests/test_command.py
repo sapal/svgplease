@@ -3,7 +3,7 @@ import unittest
 from xml.etree import ElementTree
 from . import util
 
-from svgplease.command import ChangeColor, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Page, Remove, Save, Scale, Select, SVGRoot, Tile
+from svgplease.command import ChangeColor, ChangeFontFamily, ChangeLike, ChangeText, Color, Displacement, ExecutionContext, FillStroke, Length, Open, Move, Page, Remove, Save, Scale, Select, SVGRoot, Tile
 
 class TestOpen(unittest.TestCase):
 
@@ -365,3 +365,11 @@ class TestTile(unittest.TestCase):
         self.assertNotEqual(Tile(p, True), Tile(q, True))
         self.assertNotEqual(Tile(p, True), Tile(p, False))
 
+class TestChangeFontFamily(unittest.TestCase):
+
+    def test_fields(self):
+        self.assertEqual(ChangeFontFamily("Helvetica").font, "Helvetica")
+
+    def test_eq(self):
+        self.assertEqual(ChangeFontFamily("Times New Roman"), ChangeFontFamily("Times New Roman"))
+        self.assertNotEqual(ChangeFontFamily("Verdana"), ChangeFontFamily("Helvetica"))

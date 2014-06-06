@@ -81,6 +81,10 @@ class ParseCommandList(TestParse):
         self.assertEqual(self.parse("tile", "on", "a4", "page").command_list,
                 [command.Tile(page=command.Page("a4"), fill=False)])
 
+    def test_change_font_family_command(self):
+        self.assertEqual(self.parse("change", "font", "family", "to", "Helvetica").command_list,
+                [command.ChangeFontFamily("Helvetica")])
+
     def test_two_commands(self):
         self.assertEqual(
                 self.parse("open", "file.svg", "then", "save", "to", "file1.svg").command_list,
@@ -353,6 +357,20 @@ class ParseTile(TestParse):
                 page=command.Page(command.Length(100, "px"), command.Length(100, "px")),
                 fill=False))
 
+class ParseFont(TestParse):
+    tested_class_name = "Font"
+
+    def test_font(self):
+        self.assertEqual(self.parse("Times New Roman").font, "Times New Roman")
+
+class ParseChangeFontFamily(TestParse):
+    tested_class_name = "ChangeFontFamily"
+
+    def test_change_font_family(self):
+        self.assertEqual(self.parse("change", "font", "family", "to", "Verdana").command,
+                command.ChangeFontFamily("Verdana"))
+        self.assertEqual(self.parse("change", "font", "to", "Helvetica").command,
+                command.ChangeFontFamily("Helvetica"))
 
 class Complete(unittest.TestCase):
 
@@ -384,7 +402,7 @@ class Complete(unittest.TestCase):
 
     def test_complete_change(self):
         self.assertCompletionEqual(["change"], {
-            "keyword" : ["like", "text"],
+            "keyword" : ["font", "like", "text"],
             "fill_or_stroke": ["fill", "stroke"],
             "optional_keyword": ["color", "from", "to"],
             "color": ["#rrggbb", "#rrggbbaa"],
@@ -482,4 +500,9 @@ class Complete(unittest.TestCase):
         self.assertCompletionEqual(["tile", "on"], {
             "keyword": ["a3", "a4", "a5"],
             "non_negative_number": ["0.5", "10"],
+            })
+
+    def test_complete_change_font(self):
+        self.assertCompletionEqual(["change", "font", "to"], {
+            "font": ["Arial", "Times New Roman"],
             })

@@ -114,7 +114,17 @@ COMMANDS
 
     svgplease open foo.svg then select '#foo' then **change** '#ff0000' '#00ff0088' then save to bar.svg
 
-    These two commands do the same thing: change fill and stroke color for nodes that are descendants of the node with id 'foo' from file 'foo.svg' if their current color is red (#ff0000). The target color is half-transparent blue (#00ff0088). The result is saved to 'bar.svg'
+    These two commands do the same thing: change fill and stroke color for nodes that are descendants of the node with id 'foo' from file 'foo.svg' if their current color is red (#ff0000). The target color is half-transparent blue (#00ff0088). The result is saved to 'bar.svg'.
+
+**change** font [family] to FONT
+
+  Changes font of all selected text nodes and their descendands to given.
+
+  Examples:
+    
+    svgplease open foo.svg then change font family to 'Times New Roman' then save to bar.svg
+
+    This command sets the font for all the text in 'foo.svg' to 'Times New Roman'. The result is saved to 'bar.svg'.
 
 **change like** [from] FILENAME [via FILENAME...] [to] FILENAME
 
@@ -129,7 +139,7 @@ COMMANDS
 
     svgplease open base.svg then **change like** from file1.svg via file2.svg via file3.svg to file4.svg then save to result.svg
 
-    Opens file 'base.svg', then applies all the changes between 'file1.svg' and 'file2.svg', then applies the changes between 'file2.svg' and 'file3.svg', changes between 'file3.svg' and 'file4.svg' and saves the result to 'result.svg'
+    Opens file 'base.svg', then applies all the changes between 'file1.svg' and 'file2.svg', then applies the changes between 'file2.svg' and 'file3.svg', changes between 'file3.svg' and 'file4.svg' and saves the result to 'result.svg'.
 
 **change text** to SOME_TEXT
 

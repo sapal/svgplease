@@ -355,8 +355,23 @@ class Tile(Grammar):
     def grammar_elem_init(self, sessiondata):
         self.command = command.Tile(page=self[2].page, fill=(self[1] is not None and self[1].string == "to" + SEPARATOR + "fill" + SEPARATOR))
 
+class Font(Grammar):
+    grammar = (ONE_OR_MORE(EXCEPT(ANY, SEPARATOR)), SEPARATOR)
+    def grammar_elem_init(self, sessiondata):
+        self.font = self.string[:-len(SEPARATOR)]
+    grammar_error_override = True
+    type = "font"
+    completions = ["Arial", "Times New Roman"]
+    def prefix_matches(prefix):
+        return True
+
+class ChangeFontFamily(Grammar):
+    grammar = (CommandKeyword("change"), Keyword("font"), OptionalKeyword("family"), Keyword("to"), Font)
+    def grammar_elem_init(self, sessiondata):
+        self.command = command.ChangeFontFamily(self[4].font)
+
 class CommandList(Grammar):
-    grammar = LIST_OF(OR(ChangeColor, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select, Tile), sep=Keyword("then"))
+    grammar = LIST_OF(OR(ChangeColor, ChangeFontFamily, ChangeLike, ChangeText, Move, Open, Remove, Save, Scale, Select, Tile), sep=Keyword("then"))
     def grammar_elem_init(self, sessiondata):
         self.command_list = list(map(lambda r : r.command, list(self[0])[::2]))
 

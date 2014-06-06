@@ -564,6 +564,10 @@ class ChangeLike(object):
         for command in commands:
             command.execute(execution_context)
 
+def is_text_node(node):
+    """Check if given node is a text node."""
+    return node.tag.endswith("text") or node.tag.endswith("flowPara") or node.tag.endswith("tspan")
+
 class ChangeText(object):
     """Class representing "change text to 'foo bar'" command."""
 
@@ -581,9 +585,8 @@ class ChangeText(object):
     def execute(self, execution_context):
         for node in execution_context.selected_nodes:
             for n in node.iter():
-                if n.tag.endswith("text") or n.tag.endswith("flowPara") or n.tag.endswith("tspan"):
-                    if len(n) == 0 or n.text is not None:
-                        n.text = self.text
+                if is_text_node(n) and (len(n) == 0 or n.text is not None):
+                    n.text = self.text
 
 class Page(object):
     """Class representing page dimensions."""
@@ -686,4 +689,19 @@ class Tile(object):
             g.set("transform", "translate({},{})".format(x, y))
             g.append(copy.deepcopy(inner_root))
             x += w.in_pixels()
+
+class ChangeFontFamily(object):
+    """Class representing 'change font family' command."""
+
+    def __init__(self, font):
+        self.font = font
+
+    def __eq__(self, other):
+        return self.font == other.font
+
+    def execute(self, execution_context):
+        for node in execution_context.selected_nodes:
+            for n in node.iter():
+                if is_text_node(n):
+                    n.set("font-family", self.font)
 

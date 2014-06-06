@@ -21,8 +21,11 @@ class ChangeLike(util.UsecaseTest):
 
 class ChangeText(util.UsecaseTest):
     directory = "change_text"
-    failed_directory = "/tmp/failed"
 
 class Tile(util.UsecaseTest):
     directory = "tile"
+
+class ChangeFontFamily(util.UsecaseTest):
+    directory = "change_font_family"
+    failed_directory = "/tmp/failed"
 
