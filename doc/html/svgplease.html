@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SVGplease</title>
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700);
+      @import url(http://fonts.googleapis.com/css?family=Fira+Mono&subset=latin,latin-ext);
+      .code {
+        font-family: "Fira Mono", monospace;
+      }
+      body {
+        max-width: 800px;
+        margin: auto;
+        font-size: 14pt;
+        font-family: "Droid Serif", serif;
+        line-height: 150%;
+        text-align: justify;
+      }
+      img {
+        display: block;
+        width: 400px;
+        box-shadow: 5px 7px 20px #999;
+        margin: 20px auto;
+      }
+      #tiled {
+        width: 800px;
+      }
+      a {
+        text-decoration: underline;
+        color: black;
+      }
+      a:hover {
+        font-weight: bold;
+      }
+      a:visited {
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>SVGplease</h1>
+    <h2>What's SVGplease?</h2>
+    <p>
+    SVGplease is a command-line tool for manipulating SVG images. It was developed for an university course, so it's not feature-complete. But it can be useful nonetheless.
+    </p>
+    <h2>What can it do?</h2>
+    <ul>
+      <li>Move, scale or rotate elements.</li>
+      <li>Delete elements.</li>
+      <li>Change fill and stroke colors/opacity.</li>
+      <li>Change font style and size.</li>
+      <li>Change text.</li>
+      <li>Tile SVG images onto a single image.</li>
+      <li>'Intelligently' combine changes from multiple versions of the same file into one.</li>
+    </ul>
+    <p>
+    SVGplease comes with intelligent bash and fish completion, so you can type <span class="code">svgplease</span> in the console, hit <span class="code">&lt;tab&gt;</span> and discover it for yourself (although you probably want to see an example first - read on).
+    </p>
+    <h2>Where can I get it?</h2>
+    <p>
+    If you are using Ubuntu, you can simply add this <a href="https://launchpad.net/~sapalskimichal/+archive/ubuntu/svgplease">launchpad repository</a> and install svgplease using the package manager:</p>
+    <div class="code">
+      sudo apt-add-repository ppa:sapalskimichal/svgplease <br>
+      sudo apt-get update <br>
+      sudo apt-get install svgplease <br>
+    </div>
+    <p>
+    If you are running a different operating system, you can download the source code from <a href="https://github.com/sapal/svgplease">github</a> (see the next section).
+    </p>
+    <h2>Where's the source code?</h2>
+    <p>
+    The source code is hosted on <a href="https://github.com/sapal/svgplease">github repository</a>:
+    </p>
+    <div class="code">
+      https://github.com/sapal/svgplease
+    </div>
+    <p>
+    It is licensed on GPLv3.
+    </p>
+    <h2>Can I see an example?</h2>
+    <p>Yes, sure.</p>
+    <p>
+    Let's say you created a nice smiley face like this:
+    </p>
+    <img alt="Smiley face" src="smile.svg">
+    <p>...and saved it to file <span class="code">smile.svg</code>.</p>
+    <h3>Change color</h3>
+    <p>
+    But what if you don't like the current color? Let's change it to yellow (line breaks for clarity):
+    </p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile.svg \<br>&emsp;&emsp;
+then change color to '#ffff00' \<br>&emsp;&emsp;
+then save to smile-yellow.svg
+    </div>
+    <p>
+    Now file <span class="code">smile-yellow.svg</span> contains a yellow face:
+    </p>
+    <img alt="Yellow smiley face (or not)" src="smile-yellow.svg">
+    <p>That's not what we wanted. Let's change only the <strong>fill</strong> color to yellow:</p>
+    <p>
+    Now file <span class="code">smile-yellow-fill.svg</span> contains a yellow face:
+    </p>
+    <img alt="Yellow smiley face (actually, not yet)" src="smile-yellow-fill.svg">
+    <p>Ok, that's better, but still not what we want: the text and eyes should be black.
+    So let's change only the <strong>purple</strong> color to yellow:
+    </p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile.svg \<br>&emsp;&emsp;
+then change fill color from '#800080' to '#ffff00' \<br>&emsp;&emsp;
+then save to smile-yellow-ok.svg
+    </div>
+    <p>
+    Now file <span class="code">smile-yellow-ok.svg</span> contains a yellow face:
+    </p>
+    <img alt="Yellow smiley face" src="smile-yellow-ok.svg">
+    <h3>Change text</h3>
+    <p>
+    Let's now change this "LOL" text to something different, like "Smile!".
+    </p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile-yellow-ok.svg \<br>&emsp;&emsp;
+then change text to 'Smile!' \<br>&emsp;&emsp;
+then save to smile-smile.svg
+    </div>
+    <p>Here's the result (file <span class="code">smile-smile.svg</span>):</p>
+    <img alt="Yellow smiley face with 'Simle!' text. Oh wait." src="smile-smile.svg">
+    <p>Hey! The "Be happy" text also changed! I don't want that!</p>
+    <p>Luckily, the "LOL" text has an <span class="code">id</span> (it's <span class="code">"the-text"</span>). We can use that (note the quotes around <span class="code">'#the-text'</span> - they prevent the shell from treating <span class="code">#</span> as the beginning of a comment):</p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile-yellow-ok.svg \<br>&emsp;&emsp;
+then select '#the-text' \<br>&emsp;&emsp;
+then change text to 'Smile!' \<br>&emsp;&emsp;
+then save to smile-smile-ok.svg
+    </div>
+    <p>Yes, that works (file <span class="code">smile-smile-ok.svg</span>):</p>
+    <img alt="Yellow smiley face with 'Simle!' text." src="smile-smile-ok.svg">
+    <h3>Change font style</h3>
+    <p>Maybe let's use Arial Black for the text instead of regular Arial.</p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile-smile-ok.svg \<br>&emsp;&emsp;
+then change font family to 'Arial Black' \<br>&emsp;&emsp;
+then save to smile-font.svg
+    </div>
+    <img alt="Yellow smiley face with 'Smile!' in Arial Black." src="smile-font.svg">
+    <h3>Tile images</h3>
+    <p>Now we have 7 different versions of the image. Maybe we can put them on one image to see the progress we made? The original image was 512px by 512px, so let's use 1536px by 1536px.</p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+      open smile.svg smile-yellow.svg \<br>&emsp;&emsp;&emsp;&emsp;
+        smile-yellow-fill.svg smile-yellow-ok.svg \<br>&emsp;&emsp;&emsp;&emsp;
+        smile-smile.svg smile-smile-ok.svg smile-font.svg \<br>&emsp;&emsp;
+then tile on 1536px by 1536px page \<br>&emsp;&emsp;
+then save to smile-tiled.svg
+    </div>
+    <img id="tiled" alt="Tiled smiley faces." src="smile-tiled.svg">
+    <p>Nice!</p>
+    <h3>Combine images</h3>
+    <p>What if we crated two more versions of the original image:</p>
+    <p>A winking smiley face (<span class="code">smile-wink.svg</span>):</p>
+    <img alt="A winking smiley face." src="smile-wink.svg">
+    <p>And a vampire smiley face (<span class="code">smile-vampire.svg</span>):</p>
+    <img alt="A vampire smiley face." src="smile-vampire.svg">
+    <p> What if we wanted to combine these two versions to get a winking vampire?</p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+      open smile-wink.svg \<br>&emsp;&emsp;
+      then change like from smile.svg to smile-vampire.svg \<br>&emsp;&emsp;
+      then save to smile-wink-vampire.svg
+    </div>
+    <p>Ta-da! A winking vampire face:</p>
+    <img alt="A winking vampire smiley face." src="smile-wink-vampire.svg">
+    <p>As a bonus, let's apply all the changes we made before:</p>
+    <div class="code">
+      svgplease \<br>&emsp;&emsp;
+open smile-wink-vampire.svg \<br>&emsp;&emsp;
+then change like from smile.svg to smile-font.svg \<br>&emsp;&emsp;
+then save to smile-combined.svg
+    </div>
+    <img alt="A yellow winking vampire smiley face." src="smile-combined.svg">
+    <p>You might noticed that the text didn't change to "Smile!". That's because the change detection algorithm isn't perfect. Sorry.</p>
+    <p>Ok, that gives a nice summary of the features. If you want to know more, check the manual.</p>
+    <h2>Where's the manual?</h2>
+    <p>
+    It's available from the command line when you install the <span class="code">svgplease</span> package. Also, a html version is <a href="manual.html">here</a>.
+    </p>
+  </body>
+</html>

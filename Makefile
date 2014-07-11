@@ -7,7 +7,10 @@ DEB_DIR=deb/svgplease-${VERSION}
 
 all: deb/svgplease_${VERSION}_all.deb
 
-deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC} ${DEBIAN}
+doc/html/manual.html:doc/man.rst doc/html/html4css1.css doc/html/man.css
+	rst2html doc/man.rst --stylesheet=doc/html/html4css1.css,doc/html/man.css > doc/html/manual.html
+
+deb/svgplease_${VERSION}_all.deb: ${SOURCES} ${TESTDATA} ${DOC} ${DEBIAN} doc/html/manual.html
 	mkdir -p ${DEB_DIR}/source/code
 	cp --preserve debian -R ${DEB_DIR}
 	echo 1.0 > ${DEB_DIR}/source/format
@@ -27,5 +30,6 @@ upload: deb/svgplease_${VERSION}_all.deb
 
 clean:
 	rm deb -rf
+	rm doc/html/manual.html
 
 .PHONY: upload clean

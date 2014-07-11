@@ -1,0 +1,24 @@
+@import url(http://fonts.googleapis.com/css?family=Fira+Mono&subset=latin,latin-ext);
+body {
+  text-align: justify;
+  font-family: 'Fira Mono', monospace;
+  max-width: 800px;
+  margin: auto;
+}
+blockquote {
+  margin-left: 2em;
+  margin-right: 0;
+}
+.option {
+  font-family: 'Fira Mono', monospace;
+}
+a {
+  text-decoration: underline;
+  color: black;
+}
+a:hover {
+  font-weight: bold;
+}
+a:visited {
+  color: #888;
+}

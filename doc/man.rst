@@ -2,9 +2,9 @@
 svgplease
 =========
 
--------------------------------------
-manpulate svg images from commandline
--------------------------------------
+--------------------------------------
+manipulate svg images from commandline
+--------------------------------------
 
 :Author: Michał Sapalski <sapalskimichal@gmail.com>
 :Date: 2014-05-23
@@ -166,8 +166,9 @@ COMMANDS
     
   Puts opened files onto a page (or multiple pages) of given size. If 'to fill' option is specified, opened files are repeated untill exactly one page is filled.
   PAGE_SPECIFICATION can be:
-    * a constant like: a3, a4, a5
-    * width and height: '10cm by 15cm' or '500 300'
+
+     * a constant like: a3, a4, a5
+     * width and height: '10cm by 15cm' or '500 300'
 
   Examples:
 
