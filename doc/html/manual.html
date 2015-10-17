@@ -1,0 +1,568 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.11: http://docutils.sourceforge.net/" />
+<title>svgplease</title>
+<meta name="author" content="Michał Sapalski &lt;sapalskimichal&#64;gmail.com&gt;" />
+<meta name="date" content="2014-05-23" />
+<meta name="copyright" content="GPLv3" />
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 7614 2013-02-21 15:55:51Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
+  overflow: hidden;
+}
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title, .code .error {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: inherit }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block, pre.math, pre.code {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+pre.code .ln { color: grey; } /* line numbers */
+pre.code, code { background-color: #eeeeee }
+pre.code .comment, code .comment { color: #5C6576 }
+pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
+pre.code .literal.string, code .literal.string { color: #0C5404 }
+pre.code .name.builtin, code .name.builtin { color: #352B84 }
+pre.code .deleted, code .deleted { background-color: #DEB0A1}
+pre.code .inserted, code .inserted { background-color: #A3D289}
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+/* "booktabs" style (no vertical lines) */
+table.docutils.booktabs {
+  border: 0px;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-collapse: collapse;
+}
+table.docutils.booktabs * {
+  border: 0px;
+}
+table.docutils.booktabs th {
+  border-bottom: thin solid;
+  text-align: left;
+}
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+@import url(man.css);
+
+</style>
+<style type="text/css">
+
+@import url(http://fonts.googleapis.com/css?family=Fira+Mono&subset=latin,latin-ext);
+body {
+  text-align: justify;
+  font-family: 'Fira Mono', monospace;
+  max-width: 800px;
+  margin: auto;
+}
+blockquote {
+  margin-left: 2em;
+  margin-right: 0;
+}
+.option {
+  font-family: 'Fira Mono', monospace;
+}
+a {
+  text-decoration: underline;
+  color: black;
+}
+a:hover {
+  font-weight: bold;
+}
+a:visited {
+  color: #888;
+}
+
+</style>
+</head>
+<body>
+<div class="document" id="svgplease">
+<h1 class="title">svgplease</h1>
+<h2 class="subtitle" id="manipulate-svg-images-from-commandline">manipulate svg images from commandline</h2>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr><th class="docinfo-name">Author:</th>
+<td>Michał Sapalski &lt;<a class="reference external" href="mailto:sapalskimichal&#64;gmail.com">sapalskimichal&#64;gmail.com</a>&gt;</td></tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>2014-05-23</td></tr>
+<tr><th class="docinfo-name">Copyright:</th>
+<td>GPLv3</td></tr>
+<tr><th class="docinfo-name">Version:</th>
+<td>0.2</td></tr>
+<tr class="field"><th class="docinfo-name">Manual section:</th><td class="field-body">1</td>
+</tr>
+<tr class="field"><th class="docinfo-name">Manual group:</th><td class="field-body">image processing</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="synopis">
+<h1>SYNOPIS</h1>
+<p>svgplease [--complete] commands</p>
+</div>
+<div class="section" id="description">
+<h1>DESCRIPTION</h1>
+<p>svgplease performs simple operations on svg images. It uses an English-like language to specify the operations. Available commands are described in the COMMANDS section below. Commands can be chained using the &quot;then&quot; keyword.</p>
+<dl class="docutils">
+<dt>The commands work in the following way:</dt>
+<dd><ul class="first last simple">
+<li>svgplease keeps list of currently opened files and currently selected nodes</li>
+<li>commands can read currently opened files and modify selected nodes (or other nodes, relative to the selected ones)</li>
+<li>commands can open/close files and change selection</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="example">
+<h1>EXAMPLE</h1>
+<p>svgplease open input.svg then select '#a-circle' then set fill color to '#ff0000' then save to output.svg</p>
+<dl class="docutils">
+<dt>This performs the following operations:</dt>
+<dd><ul class="first last simple">
+<li>the 'input.svg' file is opened</li>
+<li>an svg element with id 'a-circle' is selected</li>
+<li>it's fill color is set to red (#ff0000)</li>
+<li>the result is saved to file 'output.svg'</li>
+</ul>
+</dd>
+</dl>
+<p>Note that '#' has to be quoted so that the shell doesn't treat it as a comment.</p>
+<p>See the COMMANDS sections for more examples.</p>
+</div>
+<div class="section" id="commands">
+<h1>COMMANDS</h1>
+<p><strong>open</strong> FILE_NAME [FILE_NAME...]</p>
+<blockquote>
+<p>Opens given files and selects their top-level &lt;svg&gt; element. File names can be prefixed with a 'file' keyword to avoid treating file name as a keyword. This is useful if your file is named like one of the commands, but usually not needed.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">svgplease <strong>open</strong> file foo.svg bar.svg then save to foo_copy.svg bar_copy.svg</p>
+<p class="last">Effectively copies foo.svg and bar.svg to foo_copy.svg and bar_copy.svg.</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>save</strong> [to] FILE_NAME [FILE_NAME...]</p>
+<blockquote>
+Saves currently opened files using given file names. If there are more open files than file names, new file names will be generated. See <strong>open</strong> command for more information about file names and an example of usage.</blockquote>
+<p><strong>select</strong> #node_id</p>
+<blockquote>
+<p>Replaces each currently selected node by it's descendant with id node_id. Note that '#' should be quoted so that the shell doesn't interpret it as a comment.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">svgplease open foo.svg then <strong>select</strong> '#foo' then scale by 2 then save to bar.svg</p>
+<p class="last">Makes the node with id 'foo' in the file 'foo.svg' twice as big and saves result to 'bar.svg'</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>remove</strong> [selected]</p>
+<blockquote>
+<p>Removes all currently selected nodes.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><p class="first">svgplease open foo.svg then select '#foo' then <strong>remove</strong> selected then save to bar.svg</p>
+<p class="last">Remove node with id 'foo' from file 'foo.svg' and save result to 'bar.svg'</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>move</strong> [by] DISPLACEMENT [[and by] DISPLACEMENT]</p>
+<p><strong>move</strong> [by] DISPLACEMENT DIRECTION [[and by] DISPLACEMENT [DIRECTION]]</p>
+<blockquote>
+<p>Moves selected nodes horizontally and vertically. DISPLACEMENT could be any number followed by one of units: pixel (px), point (pt), millimeter (mm), centimeter (cm). The default unit is pixel. Plural form of units (e.g. 'pixels') are also supported. DIRECTION is one of: vertically (ver, y), horizontally (hor, x). The default directions are: first horizontally, then vertically.</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd><p class="first">svgplease open foo.svg then select '#foo' then <strong>move</strong> by -32mm horizontally and by 10 pixels vertically then save to bar.svg</p>
+<p>svgplease open foo.svg then select '#foo' then <strong>move</strong> 10px -32mm then save bar.svg</p>
+<p class="last">These two commands do the same thing: move node with id 'foo' in file 'foo.svg' 10 pixels to the right and 32 millimeters up and save result to 'bar.svg'</p>
+</dd>
+</dl>
+</blockquote>
+<p><strong>scale</strong> [by] SCALE [DIRECTION] [[and by] SCALE [DIRECTION]]</p>
+<blockquote>
+<p>Scales selected nodes by SCALE. SCALE can be expressed as a number or percentage (note that '%' sign should be quoted so that the shell doesn't expand it). DIRECTION can be specified to scale horizontally and/or vertically by different amount. See <strong>move</strong> command for more information about specifying directions. Default directions are: both (when one number is given) or first horizontally, then vertically.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo.svg then select '#foo' then <strong>scale</strong> by 1.5 horizontally and by '150%' vertically then save to bar.svg</p>
+<p>svgplease open foo.svg then select '#foo' then <strong>scale</strong> 1.5 then save to bar.svg</p>
+<p>These two commands do the same thing: open file 'foo.svg', select node with id 'foo', scale it by 150% horizontally and vertically and save to 'bar.svg'</p>
+</blockquote>
+</blockquote>
+<p><strong>change</strong> [fill] [[and] stroke] [color] [to] #rrggbb[aa]</p>
+<p><strong>change</strong> [fill] [[and] stroke] [color] [from] #rrggbb[aa] [to] #rrggbb[aa]</p>
+<blockquote>
+<p>Changes fill and/or stroke color of the selected nodes and all their descendants to given one. The second variant of the command changes color from one color to another -- nodes having different colors are left unchanged. If alpha component is specified, opacity is also set. Note that '#' has to be escaped so that the shell doesn't interpret it as a comment.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo.svg then select '#foo' then <strong>change</strong> fill and stroke color from '#ff0000' to '#00ff0088' then save to bar.svg</p>
+<p>svgplease open foo.svg then select '#foo' then <strong>change</strong> '#ff0000' '#00ff0088' then save to bar.svg</p>
+<p>These two commands do the same thing: change fill and stroke color for nodes that are descendants of the node with id 'foo' from file 'foo.svg' if their current color is red (#ff0000). The target color is half-transparent blue (#00ff0088). The result is saved to 'bar.svg'.</p>
+</blockquote>
+</blockquote>
+<p><strong>change</strong> font [family] to FONT</p>
+<blockquote>
+<p>Changes font of all selected text nodes and their descendands to given.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo.svg then <strong>change</strong> font family to 'Times New Roman' then save to bar.svg</p>
+<p>This command sets the font for all the text in 'foo.svg' to 'Times New Roman'. The result is saved to 'bar.svg'.</p>
+</blockquote>
+</blockquote>
+<p><strong>change</strong> font size [to] SIZE</p>
+<blockquote>
+<p>Changes font size of all selected text nodes and their descendands to given.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo.svg then <strong>change</strong> font size to 15px then save to bar.svg</p>
+<p>This command will set font size for all the text in 'foo.svg' to 15 pixels and save the result to 'bar.svg'.</p>
+</blockquote>
+</blockquote>
+<p><strong>change like</strong> [from] FILENAME [via FILENAME...] [to] FILENAME</p>
+<blockquote>
+<p>Detects changes that were made between two (or more) files and applies them to currently opened files.
+See <em>change_detection_algorithm.txt</em> (<a class="reference external" href="https://github.com/sapal/svgplease/blob/master/doc/change_detection_algorithm.txt">https://github.com/sapal/svgplease/blob/master/doc/change_detection_algorithm.txt</a>) for explanation how the changes are detected.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open color.svg then <strong>change like</strong> from base.svg to move.svg then save to merged.svg</p>
+<p>Let's say that we have file 'base.svg' and we modified it in two different ways: we changed color of some nodes and saved it to 'color.svg', then reopened 'base.svg', moved some (possibly the same) nodes around and saved to 'move.svg'. By using this command we obtain 'merged.svg' in which all changes are present: some nodes have changed color and some are moved.</p>
+<p>svgplease open base.svg then <strong>change like</strong> from file1.svg via file2.svg via file3.svg to file4.svg then save to result.svg</p>
+<p>Opens file 'base.svg', then applies all the changes between 'file1.svg' and 'file2.svg', then applies the changes between 'file2.svg' and 'file3.svg', changes between 'file3.svg' and 'file4.svg' and saves the result to 'result.svg'.</p>
+</blockquote>
+</blockquote>
+<p><strong>change text</strong> to SOME_TEXT</p>
+<blockquote>
+<p>Changes the text in all selected nodes (and their descendants) to the given text.</p>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo.svg then select '#foo' then <strong>change text</strong> to 'LOL' then save to bar.svg</p>
+<p>Change the text in node '#foo&quot; from file 'foo.svg' to 'LOL' and save the result to 'bar.svg'.</p>
+</blockquote>
+</blockquote>
+<p><strong>tile</strong> [on] PAGE_SPECIFICATION [page[s]]
+<strong>tile</strong> [to fill] PAGE_SPECIFICATION [page[s]]</p>
+<blockquote>
+<p>Puts opened files onto a page (or multiple pages) of given size. If 'to fill' option is specified, opened files are repeated untill exactly one page is filled.
+PAGE_SPECIFICATION can be:</p>
+<blockquote>
+<ul class="simple">
+<li>a constant like: a3, a4, a5</li>
+<li>width and height: '10cm by 15cm' or '500 300'</li>
+</ul>
+</blockquote>
+<p>Examples:</p>
+<blockquote>
+<p>svgplease open foo1.svg foo2.svg foo3.svg then <strong>tile</strong> on a4 page then save to bar.svg</p>
+<p>svgplease open foo1.svg foo2.svg foo3.svg then <strong>tile</strong> on 210mm by 297mm page then save to bar.svg</p>
+<p>These two commands do the same: open files 'foo1.svg' 'foo2.svg' 'foo3.svg' and tries to put them on one A4 page (if that's impossible, they will be put onto two or three pages). The output is saved to 'bar.svg'.</p>
+</blockquote>
+</blockquote>
+</div>
+<div class="section" id="options">
+<h1>OPTIONS</h1>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--complete</span></kbd></td>
+<td>Instead of executing the commands, suggest the next word. This option is for implementing tab-completion in shell.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -30,6 +30,6 @@ upload: deb/svgplease_${VERSION}_all.deb
 
 clean:
 	rm deb -rf
-	rm doc/html/manual.html
+	rm -f doc/html/manual.html
 
 .PHONY: upload clean

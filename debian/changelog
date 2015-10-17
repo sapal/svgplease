@@ -1,3 +1,8 @@
+svgplease (0.3.3) trusty; urgency=medium
+  * Updated html examples.
+
+ -- Michał Sapalski <sapalskimichal@gmail.com>  Fri, 11 Jul 2014 16:17:22 +0200
+
 svgplease (0.3.1) trusty; urgency=medium
   * Added 'change font family' and 'change font size' commands.
 

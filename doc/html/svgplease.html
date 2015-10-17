@@ -2,6 +2,13 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="description" content="SVGplease - a commandline tool for manipulating SVG files.">
+    <meta name="keywords" content="commandline,svg">
+    <meta name="author" content="Michał Sapalski">
+    <meta property="og:title" content="SVGplease - a commandline tool for manipulating SVG files." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://michalsapalski.student.tcs.uj.edu.pl/svgplease/" />
+    <meta property="og:description" content="Learn how to use SVGplease" />
     <title>SVGplease</title>
     <style>
       @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700);
@@ -83,7 +90,7 @@
     <p>
     Let's say you created a nice smiley face like this:
     </p>
-    <img alt="Smiley face" src="smile.svg">
+    <img alt="Smiley face" title="Smiley face" src="smile.svg">
     <p>...and saved it to file <span class="code">smile.svg</code>.</p>
     <h3>Change color</h3>
     <p>
@@ -98,12 +105,12 @@ then save to smile-yellow.svg
     <p>
     Now file <span class="code">smile-yellow.svg</span> contains a yellow face:
     </p>
-    <img alt="Yellow smiley face (or not)" src="smile-yellow.svg">
+    <img alt="Yellow smiley face (or not)" title="Yellow smiley face (or not)" src="smile-yellow.svg">
     <p>That's not what we wanted. Let's change only the <strong>fill</strong> color to yellow:</p>
     <p>
     Now file <span class="code">smile-yellow-fill.svg</span> contains a yellow face:
     </p>
-    <img alt="Yellow smiley face (actually, not yet)" src="smile-yellow-fill.svg">
+    <img alt="Yellow smiley face (actually, not yet)" title="Yellow smiley face (actually, not yet)" src="smile-yellow-fill.svg">
     <p>Ok, that's better, but still not what we want: the text and eyes should be black.
     So let's change only the <strong>purple</strong> color to yellow:
     </p>
@@ -116,7 +123,7 @@ then save to smile-yellow-ok.svg
     <p>
     Now file <span class="code">smile-yellow-ok.svg</span> contains a yellow face:
     </p>
-    <img alt="Yellow smiley face" src="smile-yellow-ok.svg">
+    <img alt="Yellow smiley face" title="Yellow smiley face" src="smile-yellow-ok.svg">
     <h3>Change text</h3>
     <p>
     Let's now change this "LOL" text to something different, like "Smile!".
@@ -128,7 +135,7 @@ then change text to 'Smile!' \<br>&emsp;&emsp;
 then save to smile-smile.svg
     </div>
     <p>Here's the result (file <span class="code">smile-smile.svg</span>):</p>
-    <img alt="Yellow smiley face with 'Simle!' text. Oh wait." src="smile-smile.svg">
+    <img alt="Yellow smiley face with 'Simle!' text. Oh wait." title="Yellow smiley face with 'Simle!' text. Oh wait." src="smile-smile.svg">
     <p>Hey! The "Be happy" text also changed! I don't want that!</p>
     <p>Luckily, the "LOL" text has an <span class="code">id</span> (it's <span class="code">"the-text"</span>). We can use that (note the quotes around <span class="code">'#the-text'</span> - they prevent the shell from treating <span class="code">#</span> as the beginning of a comment):</p>
     <div class="code">
@@ -139,7 +146,7 @@ then change text to 'Smile!' \<br>&emsp;&emsp;
 then save to smile-smile-ok.svg
     </div>
     <p>Yes, that works (file <span class="code">smile-smile-ok.svg</span>):</p>
-    <img alt="Yellow smiley face with 'Simle!' text." src="smile-smile-ok.svg">
+    <img alt="Yellow smiley face with 'Simle!' text." title="Yellow smiley face with 'Simle!' text." src="smile-smile-ok.svg">
     <h3>Change font style</h3>
     <p>Maybe let's use Arial Black for the text instead of regular Arial.</p>
     <div class="code">
@@ -148,7 +155,7 @@ open smile-smile-ok.svg \<br>&emsp;&emsp;
 then change font family to 'Arial Black' \<br>&emsp;&emsp;
 then save to smile-font.svg
     </div>
-    <img alt="Yellow smiley face with 'Smile!' in Arial Black." src="smile-font.svg">
+    <img alt="Yellow smiley face with 'Smile!' in Arial Black." title="Yellow smiley face with 'Smile!' in Arial Black." src="smile-font.svg">
     <h3>Tile images</h3>
     <p>Now we have 7 different versions of the image. Maybe we can put them on one image to see the progress we made? The original image was 512px by 512px, so let's use 1536px by 1536px.</p>
     <div class="code">
@@ -159,14 +166,14 @@ then save to smile-font.svg
 then tile on 1536px by 1536px page \<br>&emsp;&emsp;
 then save to smile-tiled.svg
     </div>
-    <img id="tiled" alt="Tiled smiley faces." src="smile-tiled.svg">
+    <img id="tiled" alt="Tiled smiley faces." title="Tiled smiley faces." src="smile-tiled.svg">
     <p>Nice!</p>
     <h3>Combine images</h3>
     <p>What if we crated two more versions of the original image:</p>
     <p>A winking smiley face (<span class="code">smile-wink.svg</span>):</p>
-    <img alt="A winking smiley face." src="smile-wink.svg">
+    <img alt="A winking smiley face." title="A winking smiley face." src="smile-wink.svg">
     <p>And a vampire smiley face (<span class="code">smile-vampire.svg</span>):</p>
-    <img alt="A vampire smiley face." src="smile-vampire.svg">
+    <img alt="A vampire smiley face." title="A vampire smiley face." src="smile-vampire.svg">
     <p> What if we wanted to combine these two versions to get a winking vampire?</p>
     <div class="code">
       svgplease \<br>&emsp;&emsp;
@@ -175,7 +182,7 @@ then save to smile-tiled.svg
       then save to smile-wink-vampire.svg
     </div>
     <p>Ta-da! A winking vampire face:</p>
-    <img alt="A winking vampire smiley face." src="smile-wink-vampire.svg">
+    <img alt="A winking vampire smiley face." title="A winking vampire smiley face." src="smile-wink-vampire.svg">
     <p>As a bonus, let's apply all the changes we made before:</p>
     <div class="code">
       svgplease \<br>&emsp;&emsp;
@@ -183,7 +190,7 @@ open smile-wink-vampire.svg \<br>&emsp;&emsp;
 then change like from smile.svg to smile-font.svg \<br>&emsp;&emsp;
 then save to smile-combined.svg
     </div>
-    <img alt="A yellow winking vampire smiley face." src="smile-combined.svg">
+    <img alt="A yellow winking vampire smiley face." title="A yellow winking vampire smiley face." src="smile-combined.svg">
     <p>You might noticed that the text didn't change to "Smile!". That's because the change detection algorithm isn't perfect. Sorry.</p>
     <p>Ok, that gives a nice summary of the features. If you want to know more, check the manual.</p>
     <h2>Where's the manual?</h2>
